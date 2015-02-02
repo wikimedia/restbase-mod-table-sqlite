@@ -1,0 +1,10 @@
+swagger: '2.0'
+info:
+  version: '0.0.1'
+  title: RESTBase table storage interface
+  description: Generic table storage interface optimized for distributed backends 
+paths:
+  /{table}:
+    put:
+      operationId: createTable
+
