@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "dependencies": {
     "bluebird": "~2.3.10",
+    
     "extend": "~2.0.0",
     "js-yaml": "^3.2.5",
   	"node-gyp": "*",

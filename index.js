@@ -9,6 +9,7 @@ if (!global.Promise) {
 
 // global includes
 var fs = require('fs');
+var uuid = require('node-uuid');
 var yaml = require('js-yaml');
 var util = require('util');
 
@@ -27,8 +28,8 @@ function RBSqlite (options) {
         operations: {
             createTable: this.createTable.bind(this),
             //dropTable: this.dropTable.bind(this),
-            //get: this.get.bind(this),
-            //put: this.put.bind(this)
+            get: this.get.bind(this),
+            put: this.put.bind(this)
         }
     };
 }
@@ -65,6 +66,60 @@ RBSqlite.prototype.createTable = function (rb, req) {
                 title: 'Internal error while creating a table within the cassandra storage backend',
                 stack: e.stack,
                 schema: req.body
+            }
+        };
+    });
+};
+
+// Query a table
+RBSqlite.prototype.get = function (rb, req) {
+    var rp = req.params;
+    if (!rp.rest && !req.body) {
+        // Return the entire table
+        // XXX: Only list the hash keys?
+        req.body = {
+            table: rp.table,
+            limit: 10
+        };
+    }
+    var domain = reverseDomain(req.params.domain);
+    return this.store.get(domain, req.body)
+    .then(function(res) {
+        return {
+            status: res.items.length ? 200 : 404,
+            body: res
+        };
+    })
+    .catch(function(e) {
+        return {
+            status: 500,
+            body: {
+                type: 'query_error',
+                title: 'Internal error in Cassandra table storage backend',
+                stack: e.stack
+            }
+        };
+    });
+};
+
+// Update a table
+RBSqlite.prototype.put = function (rb, req) {
+    var domain = reverseDomain(req.params.domain);
+    // XXX: Use the path to determine the primary key?
+    return this.store.put(domain, req.body)
+    .then(function(res) {
+        return {
+            status: 201 // created
+        };
+    })
+    .catch(function(e) {
+        return {
+            status: 500,
+            body: {
+                type: 'update_error',
+                title: 'Internal error in Cassandra table storage backend',
+                stack: e.stack,
+                req: req
             }
         };
     });
