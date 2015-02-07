@@ -6,6 +6,7 @@ var assert = require('assert');
 
 var makeClient = require('../lib/index');
 var router = require('../test/test_router.js');
+
 var dbu = require('../lib/dbutils.js');
 
 function deepEqual (result, expected) {
