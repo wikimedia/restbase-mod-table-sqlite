@@ -188,10 +188,43 @@ describe('DB backend', function() {
                 method: 'put',
                 body: {
                     table: 'simple-table',
-                    consistency: 'localQuorum',
                     attributes: {
                         key: 'testing',
                         tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700')),
+                    }
+                }
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+            });
+        });
+        it('simple put insert query on table with more than one range keys', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/multiRangeTable/',
+                method: 'put',
+                body: {
+                    table: "multiRangeTable",
+                    attributes: {
+                        key: 'testing',
+                        tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700')),
+                        uri: "test"
+                    },
+                }
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+            });
+        });
+        it('simple put update', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
+                method: 'put',
+                body: {
+                    table: 'simple-table',
+                    attributes: {
+                        key: "testing",
+                        tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700')),
+                        body: new Buffer("<p>Service Oriented Architecture</p>")
                     }
                 }
             })
