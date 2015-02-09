@@ -149,6 +149,39 @@ describe('DB backend', function() {
                 deepEqual(response.status, 201);
             });
         });
+        /*it('table with secondary index and no tid in range', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/unversionedSecondaryIndexTable',
+                method: 'put',
+                body: {
+                    domain: 'restbase.cassandra.test.local',
+                    table: 'unversionedSecondaryIndexTable',
+                    attributes: {
+                        key: 'string',
+                        //tid: 'timeuuid',
+                        latestTid: 'timeuuid',
+                        uri: 'string',
+                        body: 'blob',
+                            // 'deleted', 'nomove' etc?
+                        restrictions: 'set<string>',
+                    },
+                    index: [
+                        { attribute: 'key', type: 'hash' },
+                        { attribute: 'uri', type: 'range', order: 'desc' },
+                    ],
+                    secondaryIndexes: {
+                        by_uri : [
+                            { attribute: 'uri', type: 'hash' },
+                            { attribute: 'key', type: 'range', order: 'desc' },
+                            { attribute: 'body', type: 'proj' }
+                        ]
+                    }
+                }
+            })
+            .then(function(response) {
+                deepEqual(response.status, 201);
+            });
+        });*/
         it('throws Error on updating above table', function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/simple-table',
@@ -232,5 +265,42 @@ describe('DB backend', function() {
                 deepEqual(response, {status:201});
             });
         });
+        it('put with if not exists and non index attributes', function() {
+            return router.request({
+                    uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
+                    method: 'put',
+                    body: {
+                        table: "simple-table",
+                        if : "not exists",
+                        attributes: {
+                            key: "testing if not exists",
+                            tid: dbu.tidFromDate(new Date('2013-08-10 18:43:58-0700')),
+                            body: new Buffer("<p>if not exists with non key attr</p>")
+                    }
+                }
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+            });
+        });
+        it('put with if and non index attributes', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
+                method: 'put',
+                body: {
+                    table: "simple-table",
+                    attributes: {
+                        key: "another test",
+                        tid: dbu.tidFromDate(new Date('2013-08-11 18:43:58-0700')),
+                        body: new Buffer("<p>test<p>")
+                    },
+                    if: { body: { "eq": new Buffer("<p>Service Oriented Architecture</p>") } }
+                }
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+            });
+        });
+        
     });
 });
