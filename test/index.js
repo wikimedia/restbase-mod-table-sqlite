@@ -149,7 +149,7 @@ describe('DB backend', function() {
                 deepEqual(response.status, 201);
             });
         });
-        /*it('table with secondary index and no tid in range', function() {
+        it('table with secondary index and no tid in range', function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/unversionedSecondaryIndexTable',
                 method: 'put',
@@ -163,7 +163,6 @@ describe('DB backend', function() {
                         uri: 'string',
                         body: 'blob',
                             // 'deleted', 'nomove' etc?
-                        restrictions: 'set<string>',
                     },
                     index: [
                         { attribute: 'key', type: 'hash' },
@@ -181,7 +180,7 @@ describe('DB backend', function() {
             .then(function(response) {
                 deepEqual(response.status, 201);
             });
-        });*/
+        });
         it('throws Error on updating above table', function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/simple-table',
@@ -301,6 +300,5 @@ describe('DB backend', function() {
                 deepEqual(response, {status:201});
             });
         });
-        
     });
 });
