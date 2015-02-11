@@ -15,5 +15,9 @@
   "devDependencies": {
     "mocha": "x.x.x",
     "mocha-jshint": "0.0.9"
+  },
+  "scripts": {
+    "test": "rm -f test_db && mocha"
   }
 }
+
