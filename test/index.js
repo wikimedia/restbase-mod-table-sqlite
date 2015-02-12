@@ -513,23 +513,19 @@ describe('DB backend', function() {
                 method: 'get',
                 body: {
                     table: "typeSetsTable",
-                    proj: ['string','set','int','varint', 'decimal',
+                    proj: ['string','set','blob','int','varint', 'decimal',
                             'double','boolean','timeuuid','uuid', 'float',
                             'timestamp','json']
                 }
             })
             .then(function(response){
-                // note: Cassandra orders sets, so the expected rows are
-                // slightly different than the original, supplied ones
-                //deepEqual([response.body.items[0].blob[0]], [new Buffer('blob')]);
-                /*response.body.items[0].float = [roundDecimal(response.body.items[0].float[0]), 
+                response.body.items[0].float = [roundDecimal(response.body.items[0].float[0]), 
                                                 roundDecimal(response.body.items[0].float[1])];
-                */
                 deepEqual(response.body.items,  
                     [{
                     "string": "string",
                     // TODO: Fix blob types
-                    //"blob": [new Buffer('blob')],
+                    "blob": [new Buffer('blob')],
                     "set": ["bar", "baz", "foo"],
                     "int": [123456, 2567, 598765],
                     "varint": [-4503599627370496, 12233232],
