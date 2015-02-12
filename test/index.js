@@ -19,11 +19,16 @@ function deepEqual (result, expected) {
     }
 }
 
+function roundDecimal(item) {
+    return Math.round( item * 100) / 100;
+}
+
+
 var DB = require('../lib/db.js');
 
 describe('DB backend', function() {
     before(function() {
-        return makeClient()
+        return makeClient({database:"restbase"})
         .then(function(db) {
             DB = db;
             return router.makeRouter();
@@ -213,7 +218,7 @@ describe('DB backend', function() {
             });
         });
     });
-     describe('put', function() {
+    describe('put', function() {
         it('simple put insert', function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
@@ -298,6 +303,249 @@ describe('DB backend', function() {
             })
             .then(function(response) {
                 deepEqual(response, {status:201});
+            });
+        });
+    });
+    describe('types', function() {
+        this.timeout(5000);
+        it('create table', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/typeTable',
+                method: 'put',
+                body: {
+                    domain: 'restbase.cassandra.test.local',
+                    table: 'typeTable',
+                    options: { durability: 'low' },
+                    attributes: {
+                        string: 'string',
+                        blob: 'blob',
+                        set: 'set<string>',
+                        'int': 'int',
+                        varint: 'varint',
+                        decimal: 'decimal',
+                        'float': 'float',
+                        'double': 'double',
+                        'boolean': 'boolean',
+                        timeuuid: 'timeuuid',
+                        uuid: 'uuid',
+                        timestamp: 'timestamp',
+                        json: 'json',
+                    },
+                    index: [
+                        { attribute: 'string', type: 'hash' },
+                    ]
+                }
+            }).then(function(response) {
+                deepEqual(response.status, 201);
+            });
+        });
+        it('create sets table', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/typeSetsTable',
+                method: 'put',
+                body: {
+                    domain: 'restbase.cassandra.test.local',
+                    table: 'typeSetsTable',
+                    attributes: {
+                        string: 'string',
+                        set: 'set<string>',
+                        blob: 'set<blob>',
+                        'int': 'set<int>',
+                        varint: 'set<varint>',
+                        decimal: 'set<decimal>',
+                        'float': 'set<float>',
+                        'double': 'set<double>',
+                        'boolean': 'set<boolean>',
+                        timeuuid: 'set<timeuuid>',
+                        uuid: 'set<uuid>',
+                        timestamp: 'set<timestamp>',
+                        json: 'set<json>',
+                    },
+                    index: [
+                        { attribute: 'string', type: 'hash' },
+                    ]
+                }
+            }).then(function(response) {
+                deepEqual(response.status, 201);
+            });
+        }); 
+        it('put', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/typeTable/',
+                method: 'put',
+                body: {
+                    table: "typeTable",
+                    attributes: {
+                        string: 'string',
+                        blob: new Buffer('blob'),
+                        set: ['bar','baz','foo'],
+                        'int': -1,
+                        varint: -4503599627370496,
+                        decimal: '1.2',
+                        'float': -1.1,
+                        'double': 1.2,
+                        'boolean': true,
+                        timeuuid: 'c931ec94-6c31-11e4-b6d0-0f67e29867e0',
+                        uuid: 'd6938370-c996-4def-96fb-6af7ba9b6f72',
+                        timestamp: '2014-11-14T19:10:40.912Z',
+                        json: {
+                            foo: 'bar'
+                        },
+                    }
+                }
+            })
+            .then(function(response){
+                deepEqual(response, {status:201});
+            });
+        });
+        it('put 2', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/typeTable/',
+                method: 'put',
+                body: {
+                    table: "typeTable",
+                    attributes: {
+                        string: 'string',
+                        blob: new Buffer('blob'),
+                        set: ['bar','baz','foo'],
+                        'int': 1,
+                        varint: 1,
+                        decimal: '1.4',
+                        'float': -3.434,
+                        'double': 1.2,
+                        'boolean': true,
+                        timeuuid: 'c931ec94-6c31-11e4-b6d0-0f67e29867e0',
+                        uuid: 'd6938370-c996-4def-96fb-6af7ba9b6f72',
+                        timestamp: '2014-11-14T19:10:40.912Z',
+                        json: {
+                            foo: 'bar'
+                        },
+                    }
+                }
+            })
+            .then(function(response){
+                deepEqual(response, {status:201});
+            });
+        });
+        it('put sets', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/typeSetsTable/',
+                method: 'put',
+                body: {
+                    table: "typeSetsTable",
+                    attributes: {
+                        string: 'string',
+                        blob: [new Buffer('blob')],
+                        set: ['bar','baz','foo'],
+                        varint: [-4503599627370496,12233232],
+                        decimal: ['1.2','1.6'],
+                        'float': [1.3, 1.1],
+                        'double': [1.2, 1.567],
+                        'boolean': [true, false],
+                        timeuuid: ['c931ec94-6c31-11e4-b6d0-0f67e29867e0'],
+                        uuid: ['d6938370-c996-4def-96fb-6af7ba9b6f72'],
+                        timestamp: ['2014-11-14T19:10:40.912Z', '2014-12-14T19:10:40.912Z'],
+                        'int': [123456, 2567, 598765],
+                        json: [
+                            {one: 1, two: 'two'},
+                            {foo: 'bar'},
+                            {test: [{a: 'b'}, 3]}
+                        ]
+                    }
+                }
+            })
+            .then(function(response){
+                deepEqual(response, {status:201});
+            });
+        });
+        it("get", function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/typeTable/',
+                method: 'get',
+                body: {
+                    table: "typeTable",
+                    proj: ['string','blob','set','int','varint', 'decimal',
+                            'float', 'double','boolean','timeuuid','uuid',
+                            'timestamp','json']
+                }
+            })
+            .then(function(response){
+                response.body.items[0].float = roundDecimal(response.body.items[0].float);
+                response.body.items[1].float = roundDecimal(response.body.items[1].float);
+                deepEqual(response.body.items, [{
+                    string: 'string',
+                    blob: new Buffer('blob'),
+                    set: ['bar','baz','foo'],
+                    'int': -1,
+                    varint: -4503599627370496,
+                    decimal: '1.2',
+                    'float': -1.1,
+                    'double': 1.2,
+                    'boolean': true,
+                    timeuuid: 'c931ec94-6c31-11e4-b6d0-0f67e29867e0',
+                    uuid: 'd6938370-c996-4def-96fb-6af7ba9b6f72',
+                    timestamp: '2014-11-14T19:10:40.912Z',
+                    json: {
+                        foo: 'bar'
+                    }
+                },{
+                    string: 'string',
+                    blob: new Buffer('blob'),
+                    set: ['bar','baz','foo'],
+                    'int': 1,
+                    varint: 1,
+                    decimal: '1.4',
+                    'float': -3.43,
+                    'double': 1.2,
+                    'boolean': true,
+                    timeuuid: 'c931ec94-6c31-11e4-b6d0-0f67e29867e0',
+                    uuid: 'd6938370-c996-4def-96fb-6af7ba9b6f72',
+                    timestamp: '2014-11-14T19:10:40.912Z',
+                    json: {
+                        foo: 'bar'
+                    },
+                }]);
+            });
+        });
+        it("get sets", function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/typeSetsTable/',
+                method: 'get',
+                body: {
+                    table: "typeSetsTable",
+                    proj: ['string','set','int','varint', 'decimal',
+                            'double','boolean','timeuuid','uuid', 'float',
+                            'timestamp','json']
+                }
+            })
+            .then(function(response){
+                // note: Cassandra orders sets, so the expected rows are
+                // slightly different than the original, supplied ones
+                //deepEqual([response.body.items[0].blob[0]], [new Buffer('blob')]);
+                /*response.body.items[0].float = [roundDecimal(response.body.items[0].float[0]), 
+                                                roundDecimal(response.body.items[0].float[1])];
+                */
+                deepEqual(response.body.items,  
+                    [{
+                    "string": "string",
+                    // TODO: Fix blob types
+                    //"blob": [new Buffer('blob')],
+                    "set": ["bar", "baz", "foo"],
+                    "int": [123456, 2567, 598765],
+                    "varint": [-4503599627370496, 12233232],
+                    "decimal": ["1.2", "1.6"],
+                    "double": [1.2, 1.567],
+                    "boolean": [true, false],
+                    "timeuuid": ["c931ec94-6c31-11e4-b6d0-0f67e29867e0"],
+                    "uuid": ["d6938370-c996-4def-96fb-6af7ba9b6f72"],
+                    "float": [1.3, 1.1],
+                    "timestamp": ["2014-11-14T19:10:40.912Z", "2014-12-14T19:10:40.912Z"],
+                    "json": [
+                            {one: 1, two: 'two'},
+                            {foo: 'bar'},
+                            {test: [{a: 'b'}, 3]}
+                    ]
+                }]);
             });
         });
     });
