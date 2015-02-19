@@ -3,6 +3,7 @@
 global.Promise = require('bluebird');
 
 var assert = require('assert');
+var uuid = require('node-uuid');
 
 var makeClient = require('../lib/index');
 var router = require('../test/test_router.js');
@@ -67,7 +68,6 @@ describe('DB backend', function() {
                     // keep extra redundant info for primary bucket table reconstruction
                     domain: 'restbase.cassandra.test.local',
                     table: 'simple-table',
-                    options: { durability: 'low' },
                     attributes: {
                         key: 'string',
                         tid: 'timeuuid',
@@ -305,6 +305,55 @@ describe('DB backend', function() {
                 deepEqual(response, {status:201});
             });
         });
+        it('fill static colums', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
+                method: 'put',
+                body: {
+                    table: 'simple-table',
+                    attributes: {
+                        key: 'test',
+                        tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700')),
+                        latestTid: 'd6938370-c996-4def-96fb-6af7ba9b6f72',
+                        body: new Buffer("<p>test<p>")
+                    }
+                }
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+
+                return router.request({
+                     uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
+                    method: 'put',
+                    body: {
+                        table: 'simple-table',
+                        attributes: {
+                            key: 'test2',
+                            tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700')),
+                            latestTid: 'd6938370-c996-4def-96fb-6asdfd72'
+                        }
+                    }
+                });
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+                return router.request({
+                     uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
+                    method: 'put',
+                    body: {
+                        table: 'simple-table',
+                        attributes: {
+                            key: 'test',
+                            tid: dbu.tidFromDate(new Date('2013-08-09 18:43:58-0700')),
+                            latestTid: 'd6938370-c996-4def-96fb-6asdfd75'
+                        }
+                    }
+                });
+            })
+            .then(function(response){
+                deepEqual(response, {status:201});
+            });
+        });
     });
     describe('types', function() {
         this.timeout(5000);
@@ -524,7 +573,6 @@ describe('DB backend', function() {
                 deepEqual(response.body.items,  
                     [{
                     "string": "string",
-                    // TODO: Fix blob types
                     "blob": [new Buffer('blob')],
                     "set": ["bar", "baz", "foo"],
                     "int": [123456, 2567, 598765],
