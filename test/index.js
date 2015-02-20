@@ -261,7 +261,7 @@ describe('DB backend', function() {
                     attributes: {
                         key: "testing",
                         tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700')),
-                        body: new Buffer("<p>Service Oriented Architecture</p>")
+                        body: new Buffer("<p>test</p>")
                     }
                 }
             })
@@ -354,6 +354,206 @@ describe('DB backend', function() {
                 deepEqual(response, {status:201});
             });
         });
+        // TODO: add more tests for index updates
+        it('try a put on a non existing table', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/unknownTable/',
+                method: 'put',
+                body: {
+                    table: 'unknownTable',
+                    attributes: {
+                        key: 'testing',
+                        tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700')),
+                    }
+                }
+            })
+            .then(function(response) {
+                deepEqual(response.status, 500);
+            });
+        });
+    });
+
+    describe('get', function() {
+        it('varint predicates', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/varintTable/',
+                method: 'put',
+                body: {
+                    table: 'varintTable',
+                    consistency: 'localQuorum',
+                    attributes: {
+                        key: 'testing',
+                        rev: 1
+                    }
+                }
+            })
+            .then(function(item) {
+                deepEqual(item, {status:201});
+            })
+            .then(function () {
+                return router.request({
+                    uri: '/restbase.cassandra.test.local/sys/table/varintTable/',
+                    method: 'put',
+                    body: {
+                        table: 'varintTable',
+                        attributes: {
+                            key: 'testing',
+                            rev: 5
+                        }
+                    }
+                });
+            })
+            .then(function(item) {
+                deepEqual(item, {status:201});
+            })
+            .then(function () {
+                return router.request({
+                    uri: '/restbase.cassandra.test.local/sys/table/varintTable/',
+                    method: 'get',
+                    body: {
+                        table: 'varintTable',
+                        limit: 3,
+                        attributes: {
+                            key: 'testing',
+                            rev: 1
+                        }
+                    }
+                });
+            })
+            .then(function(result) {
+                deepEqual(result.body.items.length, 1);
+            })
+            .then(function () {
+                return router.request({
+                    uri: '/restbase.cassandra.test.local/sys/table/varintTable/',
+                    method: 'get',
+                    body: {
+                        table: 'varintTable',
+                        limit: 3,
+                        attributes: {
+                            key: 'testing',
+                            rev: { gt: 1 }
+                        }
+                    }
+                });
+            })
+            .then(function(result) {
+                deepEqual(result.body.items.length, 1);
+            })
+            .then(function () {
+                return router.request({
+                    uri: '/restbase.cassandra.test.local/sys/table/varintTable/',
+                    method: 'get',
+                    body: {
+                        table: 'varintTable',
+                        limit: 3,
+                        attributes: {
+                            key: 'testing',
+                            rev: { ge: 1 }
+                        }
+                    }
+                });
+            })
+            .then(function(result) {
+                deepEqual(result.body.items.length, 2);
+            });
+        });
+        /*it('simple between', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
+                method: 'get',
+                body: {
+                    table: "simple-table",
+                    //from: 'foo', // key to start the query from (paging)
+                    limit: 3,
+                    attributes: {
+                        tid: { "BETWEEN": [ dbu.tidFromDate(new Date('2013-07-08 18:43:58-0700')),
+                        dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700'))] },
+                        key: "testing"
+                    }
+                }
+            }).then(function(response) {
+                response= response.body;
+                deepEqual(response.items, [{ key: 'testing',
+                    tid: '28730300-0095-11e3-9234-0123456789ab',
+                    latestTid: null,
+                    _del: null,
+                    body: null,
+                    'content-length': null,
+                    'content-location': null,
+                    'content-sha256': null,
+                    'content-type': null,
+                    restrictions: null
+                }]);
+            });
+        });*/
+        it('simple get', function() {
+            return router.request({
+                uri:'/restbase.cassandra.test.local/sys/table/simple-table/',
+                method: 'get',
+                body: {
+                    table: "simple-table",
+                    attributes: {
+                        key: 'testing',
+                        tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700'))
+                    }
+                }
+            })
+            .then(function(response) {
+                deepEqual(response.body.items.length, 1);
+                deepEqual(response.body.items, [ { key: 'testing',
+                    tid: '28730300-0095-11e3-9234-0123456789ab',
+                    body: new Buffer("<p>test</p>"),
+                    'content-length': null,
+                    'content-location': null,
+                    'content-sha256': null,
+                    'content-type': null,
+                    _del: null,
+                } ]);
+            });
+        });
+        /*it('simple get with paging', function() {
+            return router.request({
+                uri:'/restbase.cassandra.test.local/sys/table/simple-table/',
+                method: 'get',
+                body: {
+                    table: "simple-table",
+                    pageSize: 1,
+                    attributes: {
+                        key: 'testing',
+                    }
+                }
+            })
+            .then(function(response) {
+                console.log(response);
+                deepEqual(response.body.items.length, 1);
+                return router.request({
+                    uri:'/restbase.cassandra.test.local/sys/table/simple-table/',
+                    method: 'get',
+                    body: {
+                        table: "simple-table",
+                        pageSize: 1,
+                        next: response.body.next,
+                        attributes: {
+                            key: 'testing',
+                        }
+                    }
+                });
+            })
+            .then(function(response) {
+                deepEqual(response.body.items[0], { key: 'testing',
+                    tid: '28730300-0095-11e3-9234-0123456789ab',
+                    latestTid: null,
+                    _del: null,
+                    body: null,
+                    'content-length': null,
+                    'content-location': null,
+                    'content-sha256': null,
+                    'content-type': null,
+                    restrictions: null
+                });
+            });
+        });*/
     });
     describe('types', function() {
         this.timeout(5000);
