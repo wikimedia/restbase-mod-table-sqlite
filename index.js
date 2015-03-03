@@ -3,10 +3,6 @@
  * Sqlite-backed table storage service
  */
 
-if (!global.Promise) {
-    global.Promise = require('bluebird');
-}
-
 // global includes
 var fs = require('fs');
 var uuid = require('node-uuid');

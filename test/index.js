@@ -1,7 +1,5 @@
 "use strict";
 
-global.Promise = require('bluebird');
-
 var assert = require('assert');
 var uuid = require('node-uuid');
 
