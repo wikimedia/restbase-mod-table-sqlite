@@ -29,7 +29,7 @@ var DB = require('../lib/db.js');
 
 describe('DB backend', function() {
     before(function() {
-        return makeClient({database:"restbase"})
+        return makeClient({database:"test_db"})
         .then(function(db) {
             DB = db;
             return router.makeRouter();
@@ -344,7 +344,7 @@ describe('DB backend', function() {
                         table: 'simple-table',
                         attributes: {
                             key: 'test',
-                            tid: dbu.tidFromDate(new Date('2013-08-09 18:43:58-0700')),
+                            tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700')),
                             latestTid: 'd6938370-c996-4def-96fb-6asdfd75'
                         }
                     }
@@ -493,6 +493,7 @@ describe('DB backend', function() {
                 method: 'get',
                 body: {
                     table: "simple-table",
+                    proj: ['key', 'tid', 'body'],
                     attributes: {
                         key: 'testing',
                         tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700'))
@@ -503,12 +504,7 @@ describe('DB backend', function() {
                 deepEqual(response.body.items.length, 1);
                 deepEqual(response.body.items, [ { key: 'testing',
                     tid: '28730300-0095-11e3-9234-0123456789ab',
-                    body: new Buffer("<p>test</p>"),
-                    'content-length': null,
-                    'content-location': null,
-                    'content-sha256': null,
-                    'content-type': null,
-                    _del: null,
+                    body: new Buffer("<p>test</p>")
                 } ]);
             });
         });
@@ -554,6 +550,53 @@ describe('DB backend', function() {
                 });
             });
         });*/
+        it('Get static colums', function() {
+            return router.request({
+                uri:'/restbase.cassandra.test.local/sys/table/simple-table/',
+                method: 'get',
+                body: {
+                    table: "simple-table",
+                    proj: ["key", "tid", "latestTid", "body"],
+                    attributes: {
+                        key: 'test2',
+                        tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700'))
+                    }
+                }
+            })
+            .then(function(response) {
+                deepEqual(response.body.items.length, 1);
+                deepEqual(response.body.items, [ { key: 'test2',
+                    tid: '28730300-0095-11e3-9234-0123456789ab',
+                    body: null,
+                    latestTid: 'd6938370-c996-4def-96fb-6asdfd72'
+                } ]);
+                return router.request({
+                    uri:'/restbase.cassandra.test.local/sys/table/simple-table/',
+                    method: 'get',
+                    body: {
+                        table: "simple-table",
+                        proj: "*",
+                        attributes: {
+                            key: 'test2',
+                            tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700'))
+                        }
+                    }
+                })
+            })
+            .then(function(response) {
+                deepEqual(response.body.items.length, 1);
+                deepEqual(response.body.items, [ { key: 'test2',
+                    tid: '28730300-0095-11e3-9234-0123456789ab',
+                    body: null,
+                    "content-type": null,
+                    "content-length": null,
+                    "content-sha256": null,
+                    "content-location": null,
+                    "_del": null,
+                    latestTid: 'd6938370-c996-4def-96fb-6asdfd72'
+                } ]);
+            });
+        });
     });
     describe('types', function() {
         this.timeout(5000);
