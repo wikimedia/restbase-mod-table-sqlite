@@ -82,6 +82,7 @@ RBSqlite.prototype.get = function (rb, req) {
     var domain = reverseDomain(req.params.domain);
     return this.store.get(domain, req.body)
     .then(function(res) {
+        console.log("heree", res.items.length);
         return {
             status: res.items.length ? 200 : 404,
             body: res

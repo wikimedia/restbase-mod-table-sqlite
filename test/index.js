@@ -303,6 +303,159 @@ describe('DB backend', function() {
                 deepEqual(response, {status:201});
             });
         });
+        it('index update', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/simpleSecondaryIndexTable/',
+                method: 'put',
+                body: {
+                    table: "simpleSecondaryIndexTable",
+                    attributes: {
+                        key: "test",
+                        tid: uuid.v1(),
+                        uri: "uri1",
+                        body: 'body1'
+                    },
+                }
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+
+                return router.request({
+                    uri: '/restbase.cassandra.test.local/sys/table/simpleSecondaryIndexTable/',
+                    method: 'put',
+                    body: {
+                        table: "simpleSecondaryIndexTable",
+                        attributes: {
+                            key: "test",
+                            tid: uuid.v1(),
+                            uri: "uri2",
+                            body: 'body2'
+                        }
+                    }
+                });
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+
+                return router.request({
+                    uri: '/restbase.cassandra.test.local/sys/table/simpleSecondaryIndexTable/',
+                    method: 'put',
+                    body: {
+                        table: "simpleSecondaryIndexTable",
+                        attributes: {
+                            key: "test",
+                            tid: uuid.v1(),
+                            uri: "uri3",
+                            body: 'body3'
+                        },
+                    }
+                });
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+
+                return router.request({
+                    uri: '/restbase.cassandra.test.local/sys/table/simpleSecondaryIndexTable/',
+                    method: 'put',
+                    body: {
+                        table: "simpleSecondaryIndexTable",
+                        attributes: {
+                            key: "test2",
+                            tid: uuid.v1(),
+                            uri: "uri1",
+                            body: 'test_body1'
+                        }
+                    }
+                });
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+
+                return router.request({
+                    uri: '/restbase.cassandra.test.local/sys/table/simpleSecondaryIndexTable/',
+                    method: 'put',
+                    body: {
+                        table: "simpleSecondaryIndexTable",
+                        attributes: {
+                            key: "test2",
+                            tid: uuid.v1(),
+                            uri: "uri2",
+                            body: 'test_body2'
+                        },
+                    }
+                });
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+                return router.request({
+                    uri: '/restbase.cassandra.test.local/sys/table/simpleSecondaryIndexTable/',
+                    method: 'put',
+                    body: {
+                        table: "simpleSecondaryIndexTable",
+                        attributes: {
+                            key: "test2",
+                            tid: uuid.v1(),
+                            uri: "uri3",
+                            body: 'test_body3'
+                        }
+                    }
+                });
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+
+                return router.request({
+                    uri: '/restbase.cassandra.test.local/sys/table/simpleSecondaryIndexTable/',
+                    method: 'put',
+                    body: {
+                        table: "simpleSecondaryIndexTable",
+                        attributes: {
+                            key: "test2",
+                            tid: uuid.v1(),
+                            uri: "uri3",
+                            // Also test projection updates
+                            body: 'test_body3_modified'
+                        },
+                    }
+                });
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+            });
+        });
+        /*it('unversioned index', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/unversionedSecondaryIndexTable/',
+                method: 'put',
+                body: {
+                    table: "unversionedSecondaryIndexTable",
+                    attributes: {
+                        key: "another test",
+                        uri: "a uri"
+                    },
+                }
+            })
+            .then(function(response){
+                deepEqual(response, {status:201});
+            });
+        });
+        it('unversioned index update', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/unversionedSecondaryIndexTable/',
+                method: 'put',
+                body: {
+                    table: "unversionedSecondaryIndexTable",
+                    attributes: {
+                        key: "another test",
+                        uri: "a uri",
+                        body: "abcd"
+                    }
+                }
+            })
+            .then(function(response){
+                deepEqual(response, {status:201});
+            });
+        });*/
         it('fill static colums', function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
@@ -352,7 +505,6 @@ describe('DB backend', function() {
                 deepEqual(response, {status:201});
             });
         });
-        // TODO: add more tests for index updates
         it('try a put on a non existing table', function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/unknownTable/',
@@ -549,6 +701,62 @@ describe('DB backend', function() {
                 });
             });
         });*/
+        it("index query for values that doesn't match any more", function() {
+            return router.request({
+                uri: "/restbase.cassandra.test.local/sys/table/simpleSecondaryIndexTable/",
+                method: "get",
+                body: {
+                    table: "simpleSecondaryIndexTable",
+                    index: "by_uri",
+                    attributes: {
+                        uri: "uri1"
+                    }
+                }
+            })
+            .then(function(response){
+                deepEqual(response.status, 404);
+                deepEqual(response.body.items.length, 0);
+                return router.request({
+                    uri: "/restbase.cassandra.test.local/sys/table/simpleSecondaryIndexTable/",
+                    method: "get",
+                    body: {
+                        table: "simpleSecondaryIndexTable",
+                        index: "by_uri",
+                        attributes: {
+                            uri: "uri2"
+                        }
+                    }
+                });
+            })
+            .then(function(response){
+                deepEqual(response.body.items.length, 0);
+            });
+        });
+        it("index query for current value", function() {
+            return router.request({
+                uri: "/restbase.cassandra.test.local/sys/table/simpleSecondaryIndexTable/",
+                method: "get",
+                body: {
+                    table: "simpleSecondaryIndexTable",
+                    index: "by_uri",
+                    attributes: {
+                        uri: "uri3"
+                    },
+                    proj: ['key', 'uri', 'body']
+                }
+            })
+            .then(function(response){
+                deepEqual(response.body.items, [{
+                    key: "test2",
+                    uri: "uri3",
+                    body: new Buffer("test_body3_modified")
+                },{
+                    key: "test",
+                    uri: "uri3",
+                    body: new Buffer("body3")
+                }]);
+            });
+        });
         it('Get static colums', function() {
             return router.request({
                 uri:'/restbase.cassandra.test.local/sys/table/simple-table/',
@@ -594,6 +802,22 @@ describe('DB backend', function() {
                     "_del": null,
                     latestTid: 'd6938370-c996-4def-96fb-6asdfd72'
                 } ]);
+            });
+        });
+        it('try a get on a non existing table', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/unknownTable/',
+                method: 'get',
+                body: {
+                    table: 'unknownTable',
+                    attributes: {
+                        key: 'testing',
+                        tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700')),
+                    }
+                }
+            })
+            .then(function(response) {
+                deepEqual(response.status, 500);
             });
         });
     });
@@ -749,7 +973,42 @@ describe('DB backend', function() {
                 deepEqual(response, {status:201});
             });
         });
-        it("get", function() {
+        it('put typeSetsTable, nulls and equivalents', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/typeSetsTable/',
+                method: 'put',
+                body: {
+                    table: "typeSetsTable",
+                    attributes: {
+                        string: 'nulls',
+                        set: [],
+                        blob: [],
+                        'int': [],
+                        varint: null
+                    }
+                }
+            })
+            .then(function(response){
+                deepEqual(response, {status:201});
+            });
+        });
+        it('get typeSetsTable, nulls and equivalents', function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/typeSetsTable/',
+                method: 'get',
+                body: {
+                    table: "typeSetsTable",
+                    attributes: {
+                        string: 'nulls'
+                    }
+                }
+            })
+            .then(function(res) {
+                deepEqual(res.body.items[0].string, 'nulls');
+                deepEqual(res.body.items[0].blob, []);
+            });
+        });
+        it("get typeTable", function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/typeTable/',
                 method: 'get',
@@ -798,6 +1057,21 @@ describe('DB backend', function() {
                 }]);
             });
         });
+        /*it("get typeTable index", function() {
+            return router.request({
+                uri: '/restbase.cassandra.test.local/sys/table/typeTable/',
+                method: 'get',
+                body: {
+                    table: "typeTable",
+                    index: 'test',
+                    proj: ['int']
+                }
+            })
+            .then(function(response){
+                response.body.items[0].int = 1;
+                response.body.items[1].int = -1;
+            });
+        });*/
         it("get sets", function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/typeSetsTable/',
@@ -830,8 +1104,23 @@ describe('DB backend', function() {
                             {one: 1, two: 'two'},
                             {foo: 'bar'},
                             {test: [{a: 'b'}, 3]}
-                    ]
-                }]);
+                    ]},
+                    {
+                        "string": "nulls",
+                        "set": [],
+                        "blob": [],
+                        "int": [],
+                        "varint": null,
+                        "decimal": null,
+                        "double": null,
+                        "boolean": null,
+                        "timeuuid": null,
+                        "uuid": null,
+                        "float": null,
+                        "timestamp": null,
+                        "json": null
+                    }
+                ]);
             });
         });
     });
