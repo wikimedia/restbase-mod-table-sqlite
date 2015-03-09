@@ -421,7 +421,7 @@ describe('DB backend', function() {
             .then(function(result) {
                 deepEqual(result.body.items.length, 1);
             })
-            .then(function () {
+            /*.then(function () {
                 return router.request({
                     uri: '/restbase.cassandra.test.local/sys/table/varintTable/',
                     method: 'get',
@@ -436,6 +436,7 @@ describe('DB backend', function() {
                 });
             })
             .then(function(result) {
+                console.log(result);
                 deepEqual(result.body.items.length, 1);
             })
             .then(function () {
@@ -454,7 +455,7 @@ describe('DB backend', function() {
             })
             .then(function(result) {
                 deepEqual(result.body.items.length, 2);
-            });
+            })*/;
         });
         /*it('simple between', function() {
             return router.request({
