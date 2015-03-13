@@ -589,7 +589,6 @@ describe('DB backend', function() {
                 });
             })
             .then(function(result) {
-                console.log(result);
                 deepEqual(result.body.items.length, 1);
             })
             .then(function () {
@@ -747,13 +746,13 @@ describe('DB backend', function() {
             })
             .then(function(response){
                 deepEqual(response.body.items, [{
-                    key: "test2",
-                    uri: "uri3",
-                    body: new Buffer("test_body3_modified")
-                },{
                     key: "test",
                     uri: "uri3",
                     body: new Buffer("body3")
+                },{
+                    key: "test2",
+                    uri: "uri3",
+                    body: new Buffer("test_body3_modified")
                 }]);
             });
         });
