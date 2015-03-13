@@ -423,7 +423,7 @@ describe('DB backend', function() {
                 deepEqual(response, {status:201});
             });
         });
-        /*it('unversioned index', function() {
+        it('unversioned index', function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/unversionedSecondaryIndexTable/',
                 method: 'put',
@@ -455,7 +455,7 @@ describe('DB backend', function() {
             .then(function(response){
                 deepEqual(response, {status:201});
             });
-        });*/
+        });
         it('fill static colums', function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
@@ -506,6 +506,7 @@ describe('DB backend', function() {
             });
         });
         it('try a put on a non existing table', function() {
+            this.timeout(5000);
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/unknownTable/',
                 method: 'put',
@@ -573,7 +574,7 @@ describe('DB backend', function() {
             .then(function(result) {
                 deepEqual(result.body.items.length, 1);
             })
-            /*.then(function () {
+            .then(function () {
                 return router.request({
                     uri: '/restbase.cassandra.test.local/sys/table/varintTable/',
                     method: 'get',
@@ -607,9 +608,9 @@ describe('DB backend', function() {
             })
             .then(function(result) {
                 deepEqual(result.body.items.length, 2);
-            })*/;
+            });
         });
-        /*it('simple between', function() {
+        it('simple between', function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
                 method: 'get',
@@ -627,17 +628,16 @@ describe('DB backend', function() {
                 response= response.body;
                 deepEqual(response.items, [{ key: 'testing',
                     tid: '28730300-0095-11e3-9234-0123456789ab',
-                    latestTid: null,
-                    _del: null,
-                    body: null,
+                    body: new Buffer('<p>test</p>'),
+                    //latestTid: null,
                     'content-length': null,
                     'content-location': null,
                     'content-sha256': null,
                     'content-type': null,
-                    restrictions: null
+                    _del: null,
                 }]);
             });
-        });*/
+        });
         it('simple get', function() {
             return router.request({
                 uri:'/restbase.cassandra.test.local/sys/table/simple-table/',
@@ -848,7 +848,14 @@ describe('DB backend', function() {
                     },
                     index: [
                         { attribute: 'string', type: 'hash' },
-                    ]
+                    ],
+                    secondaryIndexes: {
+                        test: [
+                            { attribute: 'int', type: 'hash' },
+                            { attribute: 'string', type: 'range' },
+                            { attribute: 'boolean', type: 'range' }
+                        ]
+                    }
                 }
             }).then(function(response) {
                 deepEqual(response.status, 201);
@@ -1057,7 +1064,7 @@ describe('DB backend', function() {
                 }]);
             });
         });
-        /*it("get typeTable index", function() {
+        it("get typeTable index", function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/typeTable/',
                 method: 'get',
@@ -1071,7 +1078,7 @@ describe('DB backend', function() {
                 response.body.items[0].int = 1;
                 response.body.items[1].int = -1;
             });
-        });*/
+        });
         it("get sets", function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/typeSetsTable/',
@@ -1084,10 +1091,25 @@ describe('DB backend', function() {
                 }
             })
             .then(function(response){
-                response.body.items[0].float = [roundDecimal(response.body.items[0].float[0]), 
-                                                roundDecimal(response.body.items[0].float[1])];
+                response.body.items[1].float = [roundDecimal(response.body.items[1].float[0]), 
+                                                roundDecimal(response.body.items[1].float[1])];
                 deepEqual(response.body.items,  
                     [{
+                        "string": "nulls",
+                        "set": [],
+                        "blob": [],
+                        "int": [],
+                        "varint": null,
+                        "decimal": null,
+                        "double": null,
+                        "boolean": null,
+                        "timeuuid": null,
+                        "uuid": null,
+                        "float": null,
+                        "timestamp": null,
+                        "json": null
+                    },
+                    {
                     "string": "string",
                     "blob": [new Buffer('blob')],
                     "set": ["bar", "baz", "foo"],
@@ -1104,22 +1126,7 @@ describe('DB backend', function() {
                             {one: 1, two: 'two'},
                             {foo: 'bar'},
                             {test: [{a: 'b'}, 3]}
-                    ]},
-                    {
-                        "string": "nulls",
-                        "set": [],
-                        "blob": [],
-                        "int": [],
-                        "varint": null,
-                        "decimal": null,
-                        "double": null,
-                        "boolean": null,
-                        "timeuuid": null,
-                        "uuid": null,
-                        "float": null,
-                        "timestamp": null,
-                        "json": null
-                    }
+                    ]}
                 ]);
             });
         });
