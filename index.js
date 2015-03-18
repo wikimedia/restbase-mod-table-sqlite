@@ -9,12 +9,10 @@ var uuid = require('node-uuid');
 var yaml = require('js-yaml');
 var util = require('util');
 
+var dbu = require('./lib/dbutils');
+
 // TODO: move to separate package!
 var spec = yaml.safeLoad(fs.readFileSync(__dirname + '/table.yaml'));
-
-function reverseDomain (domain) {
-    return domain.toLowerCase().split('.').reverse().join('.');
-}
 
 function RBSqlite (options) {
     this.setup = this.setup.bind(this);
@@ -23,7 +21,7 @@ function RBSqlite (options) {
         spec: spec,
         operations: {
             createTable: this.createTable.bind(this),
-            //dropTable: this.dropTable.bind(this),
+            dropTable: this.dropTable.bind(this),
             get: this.get.bind(this),
             put: this.put.bind(this)
         }
@@ -33,7 +31,7 @@ function RBSqlite (options) {
 RBSqlite.prototype.createTable = function (rb, req) {
     var store = this.store;
     req.body.table = req.params.table;
-    var domain = reverseDomain(req.params.domain);
+    var domain = req.params.domain;
 
     // check if the domains table exists
     return store.createTable(domain, req.body)
@@ -56,6 +54,9 @@ RBSqlite.prototype.createTable = function (rb, req) {
         };
     })
     .catch(function(e) {
+        if (e instanceof dbu.HTTPError) {
+            return e;
+        }
         return {
             status: 500,
             body: {
@@ -79,7 +80,7 @@ RBSqlite.prototype.get = function (rb, req) {
             limit: 10
         };
     }
-    var domain = reverseDomain(req.params.domain);
+    var domain = req.params.domain;
     return this.store.get(domain, req.body)
     .then(function(res) {
         return {
@@ -101,7 +102,7 @@ RBSqlite.prototype.get = function (rb, req) {
 
 // Update a table
 RBSqlite.prototype.put = function (rb, req) {
-    var domain = reverseDomain(req.params.domain);
+    var domain = req.params.domain;
     // XXX: Use the path to determine the primary key?
     return this.store.put(domain, req.body)
     .then(function(res) {
@@ -121,6 +122,29 @@ RBSqlite.prototype.put = function (rb, req) {
         };
     });
 };
+
+RBSqlite.prototype.dropTable = function (rb, req) {
+    var domain = req.params.domain;
+    return this.store.dropTable(domain, req.params.table)
+    .then(function(res) {
+        return {
+            status: 204 // done
+        };
+    })
+    .catch(function(e) {
+        return {
+            status: 500,
+            body: {
+                type: 'delete_error',
+                title: 'Internal error in Cassandra table storage backend',
+                stack: e.stack,
+                err: e,
+                req: req
+            }
+        };
+    });
+};
+
 
 /*
  * Setup / startup

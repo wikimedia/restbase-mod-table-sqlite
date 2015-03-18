@@ -27,7 +27,17 @@ var DB = require('../lib/db.js');
 
 describe('DB backend', function() {
     before(function() {
-        return makeClient({database:"test_db"})
+        return makeClient({
+            database:"test_db",
+            log: function(level, info) {
+                if (!/^info|verbose|debug|trace/.test(level)) {
+                    console.log(level, info);
+                }
+            },
+            conf: {
+                hosts: ['localhost']
+            }
+        })
         .then(function(db) {
             DB = db;
             return router.makeRouter();
@@ -633,7 +643,6 @@ describe('DB backend', function() {
                     'content-location': null,
                     'content-sha256': null,
                     'content-type': null,
-                    _del: null,
                 }]);
             });
         });
@@ -798,7 +807,6 @@ describe('DB backend', function() {
                     "content-length": null,
                     "content-sha256": null,
                     "content-location": null,
-                    "_del": null,
                     latestTid: 'd6938370-c996-4def-96fb-6asdfd72'
                 } ]);
             });
@@ -1020,6 +1028,9 @@ describe('DB backend', function() {
                 method: 'get',
                 body: {
                     table: "typeTable",
+                    attributes: {
+                        string: 'string'
+                    },
                     proj: ['string','blob','set','int','varint', 'decimal',
                             'float', 'double','boolean','timeuuid','uuid',
                             'timestamp','json']
@@ -1067,6 +1078,9 @@ describe('DB backend', function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/typeTable/',
                 method: 'get',
+                attributes: {
+                    int: '1'
+                },
                 body: {
                     table: "typeTable",
                     index: 'test',
@@ -1075,13 +1089,16 @@ describe('DB backend', function() {
             })
             .then(function(response){
                 response.body.items[0].int = 1;
-                response.body.items[1].int = -1;
+                response.body.items[0].boolean = true;
             });
         });
         it("get sets", function() {
             return router.request({
                 uri: '/restbase.cassandra.test.local/sys/table/typeSetsTable/',
                 method: 'get',
+                attributes: {
+                    string: 'string'
+                },
                 body: {
                     table: "typeSetsTable",
                     proj: ['string','set','blob','int','varint', 'decimal',
