@@ -26,6 +26,7 @@ function roundDecimal(item) {
 var DB = require('../lib/db.js');
 
 describe('DB backend', function() {
+    var db;
     before(function() {
         return makeClient({
             database:"test_db",
@@ -38,8 +39,8 @@ describe('DB backend', function() {
                 hosts: ['localhost']
             }
         })
-        .then(function(db) {
-            DB = db;
+        .then(function(newdb) {
+            db = newdb;
             return router.makeRouter();
         });
     });
@@ -828,6 +829,18 @@ describe('DB backend', function() {
             });
         });
     });
+    //TODO: implement this using http handler when alternate rest-url for delete item are supported
+    /*describe('delete', function() {
+        it('simple delete query', function() {
+            return db.delete('restbase.cassandra.test.local', {
+                table: "simple-table",
+                attributes: {
+                    tid: dbu.testTidFromDate(new Date('2013-08-09 18:43:58-0700')),
+                    key: "testing"
+                }
+            });
+        });
+    });*/
     describe('types', function() {
         this.timeout(5000);
         it('create table', function() {
@@ -1147,4 +1160,52 @@ describe('DB backend', function() {
             });
         });
     });
+    it('drop tables', function() {
+        this.timeout(15000);
+        return router.request({
+            uri: "/restbase.cassandra.test.local/sys/table/typeTable",
+            method: "delete",
+            body: {}
+        }).then(function() {
+            return router.request({
+                uri: "/restbase.cassandra.test.local/sys/table/typeSetsTable",
+                method: "delete",
+                body: {}
+            });
+        });
+    });
+    /*describe('dropTable', function() {
+        this.timeout(15000);
+        it('drop some simple table', function() {
+            return router.request({
+                uri: "/restbase.cassandra.test.local/sys/table/varintTable",
+                method: "delete",
+                body: {}
+            }).then(function() {
+                return router.request({
+                    uri: "/restbase.cassandra.test.local/sys/table/simple-table",
+                    method: "delete",
+                    body: {}
+                });
+            }).then(function() {
+                return router.request({
+                    uri: "/restbase.cassandra.test.local/sys/table/multiRangeTable",
+                    method: "delete",
+                    body: {}
+                });
+            }).then(function() {
+                return router.request({
+                    uri: "/restbase.cassandra.test.local/sys/table/simpleSecondaryIndexTable",
+                    method: "delete",
+                    body: {}
+                });
+            }).then(function() {
+                return router.request({
+                    uri: "/restbase.cassandra.test.local/sys/table/unversionedSecondaryIndexTable",
+                    method: "delete",
+                    body: {}
+                });
+            });
+        });
+    });*/
 });
