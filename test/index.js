@@ -830,17 +830,17 @@ describe('DB backend', function() {
         });
     });
     //TODO: implement this using http handler when alternate rest-url for delete item are supported
-    /*describe('delete', function() {
+    describe('delete', function() {
         it('simple delete query', function() {
             return db.delete('restbase.sqlite.test.local', {
                 table: "simple-table",
                 attributes: {
-                    tid: dbu.testTidFromDate(new Date('2013-08-09 18:43:58-0700')),
+                    tid: uuid.v1(),//dbu.testTidFromDate(new Date('2013-08-09 18:43:58-0700')),
                     key: "testing"
                 }
             });
         });
-    });*/
+    });
     describe('types', function() {
         this.timeout(5000);
         it('create table', function() {
@@ -1174,7 +1174,7 @@ describe('DB backend', function() {
             });
         });
     });
-    /*describe('dropTable', function() {
+    describe('dropTable', function() {
         this.timeout(15000);
         it('drop some simple table', function() {
             return router.request({
@@ -1207,5 +1207,5 @@ describe('DB backend', function() {
                 });
             });
         });
-    });*/
+    });
 });
