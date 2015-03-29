@@ -88,7 +88,7 @@ describe('DB backend', function() {
                                 // redirect
                                 'content-location': 'string',
                                     // 'deleted', 'nomove' etc?
-                        //restrictions: 'set<string>',
+                        restrictions: 'set<string>',
                     },
                     index: [
                         { attribute: 'key', type: 'hash' },
@@ -639,11 +639,12 @@ describe('DB backend', function() {
                 deepEqual(response.items, [{ key: 'testing',
                     tid: '28730300-0095-11e3-9234-0123456789ab',
                     body: new Buffer('<p>test</p>'),
-                    //latestTid: null,
                     'content-length': null,
                     'content-location': null,
                     'content-sha256': null,
                     'content-type': null,
+                    restrictions: null,
+                    "latestTid": null
                 }]);
             });
         });
@@ -653,7 +654,7 @@ describe('DB backend', function() {
                 method: 'get',
                 body: {
                     table: "simple-table",
-                    proj: ['key', 'tid', 'body'],
+                    //proj: "*",
                     attributes: {
                         key: 'testing',
                         tid: dbu.tidFromDate(new Date('2013-08-08 18:43:58-0700'))
@@ -664,10 +665,16 @@ describe('DB backend', function() {
                 deepEqual(response.body.items.length, 1);
                 deepEqual(response.body.items, [ { key: 'testing',
                     tid: '28730300-0095-11e3-9234-0123456789ab',
-                    body: new Buffer("<p>test</p>")
+                    body: new Buffer("<p>test</p>"),
+                    "content-type": null,
+                    "content-length": null,
+                    "content-sha256": null,
+                    "content-location": null,	
+                    "restrictions": null,
+                    "latestTid": null
                 } ]);
             });
-        });
+        }); 
         /*it('simple get with paging', function() {
             return router.request({
                 uri:'/restbase.sqlite.test.local/sys/table/simple-table/',
@@ -808,6 +815,7 @@ describe('DB backend', function() {
                     "content-length": null,
                     "content-sha256": null,
                     "content-location": null,
+                    restrictions: null,
                     latestTid: 'd6938370-c996-4def-96fb-6asdfd72'
                 } ]);
             });
