@@ -125,7 +125,7 @@ RBSqlite.prototype.put = function (rb, req) {
 
 RBSqlite.prototype.dropTable = function (rb, req) {
     var domain = req.params.domain;
-    return this.store.dropTable(domain, req.params.table)
+    return this.store.dropTable(domain, req.params.table, req.body)
     .then(function(res) {
         return {
             status: 204 // done
