@@ -33,7 +33,6 @@ RBSqlite.prototype.createTable = function (rb, req) {
     req.body.table = req.params.table;
     var domain = req.params.domain;
 
-    // check if the domains table exists
     return store.createTable(domain, req.body)
     .then(function(res) {
         if (res && res.status >= 400) {
