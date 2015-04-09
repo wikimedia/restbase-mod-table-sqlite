@@ -244,6 +244,23 @@ describe('DB backend', function() {
                 deepEqual(response, {status:201});
             });
         });
+        it('simple put update', function() {
+            return router.request({
+                uri: '/restbase.sqlite.test.local/sys/table/simple-table/',
+                method: 'put',
+                body: {
+                    table: 'simple-table',
+                    attributes: {
+                        key: 'testing',
+                        tid: dbu.tidFromDate(new Date('2013-08-09 18:43:58-0700')),
+                    }
+                }
+            })
+            .then(function(response) {
+                deepEqual(response, {status:201});
+            });
+        });
+
         it('simple put insert query on table with more than one range keys', function() {
             return router.request({
                 uri: '/restbase.sqlite.test.local/sys/table/multiRangeTable/',
@@ -843,12 +860,25 @@ describe('DB backend', function() {
             return db.delete('restbase.sqlite.test.local', {
                 table: "simple-table",
                 attributes: {
-                    tid: uuid.v1(),//dbu.testTidFromDate(new Date('2013-08-09 18:43:58-0700')),
+                    tid: dbu.tidFromDate(new Date('2013-08-09 18:43:58-0700')),//dbu.testTidFromDate(new Date('2013-08-09 18:43:58-0700')),
                     key: "testing"
                 }
             });
         });
     });
+    //TODO: implement this using http handler when alternate rest-url for delete item are supported
+    describe('delete', function() {
+        it('simple delete query', function() {
+            return db.delete('restbase.sqlite.test.local', {
+                table: "simple-table",
+                attributes: {
+                    tid: dbu.tidFromDate(new Date('2013-08-10 18:43:58-0700')),//dbu.testTidFromDate(new Date('2013-08-09 18:43:58-0700')),
+                    key: "testing if not exists"
+                }
+            });
+        });
+    });
+
     describe('types', function() {
         this.timeout(5000);
         it('create table', function() {
