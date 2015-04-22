@@ -837,6 +837,70 @@ describe('DB backend', function() {
                 } ]);
             });
         });
+        it('simple get with order by', function() {
+            return router.request({
+                uri:'/restbase.sqlite.test.local/sys/table/simple-table/',
+                method: 'get',
+                body: {
+                    table: "simple-table",
+                    order: {tid: "desc"},
+                }
+            })
+            .then(function(response) {
+                deepEqual(response.body.items.length, 5);
+                deepEqual(response.body.items, [ {
+                    key: 'testing if not exists',
+                    tid: '7d468300-0227-11e3-9234-0123456789ab',
+                    body: new Buffer("<p>if not exists with non key attr</p>"),
+                    'content-type': null,
+                    'content-length': null,
+                    'content-sha256': null,
+                    'content-location': null,
+                    restrictions: null,
+                    latestTid: null
+                },{
+                    key: 'testing',
+                    tid: '52dcc300-015e-11e3-9234-0123456789ab',
+                    body: null,
+                    'content-type': null,
+                    'content-length': null,
+                    'content-sha256': null,
+                    'content-location': null,
+                    restrictions: null,
+                    latestTid: null
+                },{
+                    key: 'test',
+                    tid: '28730300-0095-11e3-9234-0123456789ab',
+                    body: new Buffer("<p>test<p>"),
+                    'content-type': null,
+                    'content-length': null,
+                    'content-sha256': null,
+                    'content-location': null,
+                    restrictions: null,
+                    latestTid: 'd6938370-c996-4def-96fb-6af7ba9b6f72'
+                },{
+                    key: 'test2',
+                    tid: '28730300-0095-11e3-9234-0123456789ab',
+                    body: null,
+                    'content-type': null,
+                    'content-length': null,
+                    'content-sha256': null,
+                    'content-location': null,
+                    restrictions: null,
+                    latestTid: 'd6938370-c996-4def-96fb-6asdfd72'
+                },{
+                    key: 'testing',
+                    tid: '28730300-0095-11e3-9234-0123456789ab',
+                    body: new Buffer("<p>test</p>"),
+                    'content-type': null,
+                    'content-length': null,
+                    'content-sha256': null,
+                    'content-location': null,
+                    restrictions: null,
+                    latestTid: null
+                }]);
+            });
+        });
         it('try a get on a non existing table', function() {
             return router.request({
                 uri: '/restbase.sqlite.test.local/sys/table/unknownTable/',
@@ -853,10 +917,23 @@ describe('DB backend', function() {
                 deepEqual(response.status, 500);
             });
         });
+
     });
     //TODO: implement this using http handler when alternate rest-url for delete item are supported
     describe('delete', function() {
         it('simple delete query', function() {
+            return db.delete('restbase.sqlite.test.local', {
+                table: "simple-table",
+                attributes: {
+                    tid: dbu.tidFromDate(new Date('2013-08-10 18:43:58-0700')),
+                    key: "testing if not exists"
+                }
+            });
+        });
+    });
+    //TODO: implement this using http handler when alternate rest-url for delete item are supported
+    describe('delete', function() {
+        it('query to test delete in static table', function() {
             return db.delete('restbase.sqlite.test.local', {
                 table: "simple-table",
                 attributes: {
@@ -866,19 +943,6 @@ describe('DB backend', function() {
             });
         });
     });
-    //TODO: implement this using http handler when alternate rest-url for delete item are supported
-    describe('delete', function() {
-        it('simple delete query', function() {
-            return db.delete('restbase.sqlite.test.local', {
-                table: "simple-table",
-                attributes: {
-                    tid: dbu.tidFromDate(new Date('2013-08-10 18:43:58-0700')),//dbu.testTidFromDate(new Date('2013-08-09 18:43:58-0700')),
-                    key: "testing if not exists"
-                }
-            });
-        });
-    });
-
     describe('types', function() {
         this.timeout(5000);
         it('create table', function() {
@@ -1094,22 +1158,6 @@ describe('DB backend', function() {
                     string: 'string',
                     blob: new Buffer('blob'),
                     set: ['bar','baz','foo'],
-                    'int': -1,
-                    varint: -4503599627370496,
-                    decimal: '1.2',
-                    'float': -1.1,
-                    'double': 1.2,
-                    'boolean': true,
-                    timeuuid: 'c931ec94-6c31-11e4-b6d0-0f67e29867e0',
-                    uuid: 'd6938370-c996-4def-96fb-6af7ba9b6f72',
-                    timestamp: '2014-11-14T19:10:40.912Z',
-                    json: {
-                        foo: 'bar'
-                    }
-                },{
-                    string: 'string',
-                    blob: new Buffer('blob'),
-                    set: ['bar','baz','foo'],
                     'int': 1,
                     varint: 1,
                     decimal: '1.4',
@@ -1122,6 +1170,22 @@ describe('DB backend', function() {
                     json: {
                         foo: 'bar'
                     },
+                },{
+                    string: 'string',
+                    blob: new Buffer('blob'),
+                    set: ['bar','baz','foo'],
+                    'int': -1,
+                    varint: -4503599627370496,
+                    decimal: '1.2',
+                    'float': -1.1,
+                    'double': 1.2,
+                    'boolean': true,
+                    timeuuid: 'c931ec94-6c31-11e4-b6d0-0f67e29867e0',
+                    uuid: 'd6938370-c996-4def-96fb-6af7ba9b6f72',
+                    timestamp: '2014-11-14T19:10:40.912Z',
+                    json: {
+                        foo: 'bar'
+                    }
                 }]);
             });
         });
