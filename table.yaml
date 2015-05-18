@@ -12,6 +12,8 @@ paths:
   /{table}:
     put:
       operationId: createTable
+    delete:
+      operationId: dropTable
 
   /{table}/{+rest}:
     get: *get

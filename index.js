@@ -3,22 +3,16 @@
  * Sqlite-backed table storage service
  */
 
-if (!global.Promise) {
-    global.Promise = require('bluebird');
-}
-
 // global includes
 var fs = require('fs');
 var uuid = require('node-uuid');
 var yaml = require('js-yaml');
 var util = require('util');
 
+var dbu = require('./lib/dbutils');
+
 // TODO: move to separate package!
 var spec = yaml.safeLoad(fs.readFileSync(__dirname + '/table.yaml'));
-
-function reverseDomain (domain) {
-    return domain.toLowerCase().split('.').reverse().join('.');
-}
 
 function RBSqlite (options) {
     this.setup = this.setup.bind(this);
@@ -27,7 +21,7 @@ function RBSqlite (options) {
         spec: spec,
         operations: {
             createTable: this.createTable.bind(this),
-            //dropTable: this.dropTable.bind(this),
+            dropTable: this.dropTable.bind(this),
             get: this.get.bind(this),
             put: this.put.bind(this)
         }
@@ -37,9 +31,8 @@ function RBSqlite (options) {
 RBSqlite.prototype.createTable = function (rb, req) {
     var store = this.store;
     req.body.table = req.params.table;
-    var domain = reverseDomain(req.params.domain);
+    var domain = req.params.domain;
 
-    // check if the domains table exists
     return store.createTable(domain, req.body)
     .then(function(res) {
         if (res && res.status >= 400) {
@@ -60,11 +53,14 @@ RBSqlite.prototype.createTable = function (rb, req) {
         };
     })
     .catch(function(e) {
+        if (e instanceof dbu.HTTPError) {
+            return e;
+        }
         return {
             status: 500,
             body: {
                 type: 'table_creation_error',
-                title: 'Internal error while creating a table within the cassandra storage backend',
+                title: 'Internal error while creating a table within the SQLite storage backend',
                 stack: e.stack,
                 schema: req.body
             }
@@ -83,7 +79,7 @@ RBSqlite.prototype.get = function (rb, req) {
             limit: 10
         };
     }
-    var domain = reverseDomain(req.params.domain);
+    var domain = req.params.domain;
     return this.store.get(domain, req.body)
     .then(function(res) {
         return {
@@ -96,7 +92,7 @@ RBSqlite.prototype.get = function (rb, req) {
             status: 500,
             body: {
                 type: 'query_error',
-                title: 'Internal error in Cassandra table storage backend',
+                title: 'Internal error in SQLite table storage backend',
                 stack: e.stack
             }
         };
@@ -105,7 +101,7 @@ RBSqlite.prototype.get = function (rb, req) {
 
 // Update a table
 RBSqlite.prototype.put = function (rb, req) {
-    var domain = reverseDomain(req.params.domain);
+    var domain = req.params.domain;
     // XXX: Use the path to determine the primary key?
     return this.store.put(domain, req.body)
     .then(function(res) {
@@ -118,13 +114,36 @@ RBSqlite.prototype.put = function (rb, req) {
             status: 500,
             body: {
                 type: 'update_error',
-                title: 'Internal error in Cassandra table storage backend',
+                title: 'Internal error in SQLite table storage backend',
                 stack: e.stack,
                 req: req
             }
         };
     });
 };
+
+RBSqlite.prototype.dropTable = function (rb, req) {
+    var domain = req.params.domain;
+    return this.store.dropTable(domain, req.params.table, req.body)
+    .then(function(res) {
+        return {
+            status: 204 // done
+        };
+    })
+    .catch(function(e) {
+        return {
+            status: 500,
+            body: {
+                type: 'delete_error',
+                title: 'Internal error in SQLite table storage backend',
+                stack: e.stack,
+                err: e,
+                req: req
+            }
+        };
+    });
+};
+
 
 /*
  * Setup / startup
