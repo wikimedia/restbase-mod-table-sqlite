@@ -887,7 +887,7 @@ describe('DB backend', function() {
                     'content-sha256': null,
                     'content-location': null,
                     restrictions: null,
-                    latestTid: 'd6938370-c996-4def-96fb-6asdfd72'
+                    latestTid: 'd6938370-c996-4def-96fb-6asdfd72' 
                 },{
                     key: 'testing',
                     tid: '28730300-0095-11e3-9234-0123456789ab',
@@ -897,7 +897,7 @@ describe('DB backend', function() {
                     'content-sha256': null,
                     'content-location': null,
                     restrictions: null,
-                    latestTid: null
+                    latestTid: null 
                 }]);
             });
         });
