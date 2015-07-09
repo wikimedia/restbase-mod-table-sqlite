@@ -1,0 +1,2 @@
+type: restbase-cassandra
+dbname: test_db

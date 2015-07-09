@@ -1,79 +1,70 @@
 "use strict";
 /*
- * Sqlite-backed table storage service
+ * Cassandra-backed table storage service
  */
 
-if (!global.Promise) {
-    global.Promise = require('bluebird');
-}
-
 // global includes
-var fs = require('fs');
-var uuid = require('node-uuid');
-var yaml = require('js-yaml');
-var util = require('util');
+var spec = require('restbase-mod-table-spec').spec;
 
-// TODO: move to separate package!
-var spec = yaml.safeLoad(fs.readFileSync(__dirname + '/table.yaml'));
-
-function reverseDomain (domain) {
-    return domain.toLowerCase().split('.').reverse().join('.');
-}
-
-function RBSqlite (options) {
+function RBSQLite (options) {
+    this.options = options;
+    this.conf = options.conf;
+    this.log = options.log;
     this.setup = this.setup.bind(this);
     this.store = null;
     this.handler = {
         spec: spec,
         operations: {
             createTable: this.createTable.bind(this),
-            //dropTable: this.dropTable.bind(this),
+            dropTable: this.dropTable.bind(this),
+            getTableSchema: this.getTableSchema.bind(this),
             get: this.get.bind(this),
             put: this.put.bind(this)
         }
     };
 }
 
-RBSqlite.prototype.createTable = function (rb, req) {
+RBSQLite.prototype.createTable = function (rb, req) {
     var store = this.store;
+    // XXX: decide on the interface
     req.body.table = req.params.table;
-    var domain = reverseDomain(req.params.domain);
+    var domain = req.params.domain;
 
     // check if the domains table exists
     return store.createTable(domain, req.body)
-    .then(function(res) {
-        if (res && res.status >= 400) {
-            return {
-                status: res.status,
-                body: res.body
-            };
-        } else {
-            return {
-                status: 201, // created
-                body: {
-                    type: 'table_created',
-                    title: 'Table was created.',
-                    domain: req.params.domain,
-                    table: req.params.table
-                }
-            };
+    .then(function() {
+        return {
+            status: 201, // created
+            body: {
+                type: 'table_created',
+                title: 'Table was created.',
+                domain: req.params.domain,
+                table: req.params.table
+            }
         };
     })
     .catch(function(e) {
+        if (e.status >= 400) {
+            return {
+                status: e.status,
+                body: e.body
+            };
+        }
         return {
             status: 500,
             body: {
                 type: 'table_creation_error',
                 title: 'Internal error while creating a table within the cassandra storage backend',
                 stack: e.stack,
-                schema: req.body
+                err: e,
+                req: req
             }
         };
     });
 };
 
 // Query a table
-RBSqlite.prototype.get = function (rb, req) {
+RBSQLite.prototype.get = function (rb, req) {
     var rp = req.params;
     if (!rp.rest && !req.body) {
         // Return the entire table
@@ -83,7 +74,7 @@ RBSqlite.prototype.get = function (rb, req) {
             limit: 10
         };
     }
-    var domain = reverseDomain(req.params.domain);
+    var domain = req.params.domain;
     return this.store.get(domain, req.body)
     .then(function(res) {
         return {
@@ -96,16 +87,18 @@ RBSqlite.prototype.get = function (rb, req) {
             status: 500,
             body: {
                 type: 'query_error',
-                title: 'Internal error in Cassandra table storage backend',
-                stack: e.stack
+                title: 'Error in Cassandra table storage backend',
+                stack: e.stack,
+                err: e,
+                req: req
             }
         };
     });
 };
 
 // Update a table
-RBSqlite.prototype.put = function (rb, req) {
-    var domain = reverseDomain(req.params.domain);
+RBSQLite.prototype.put = function (rb, req) {
+    var domain = req.params.domain;
     // XXX: Use the path to determine the primary key?
     return this.store.put(domain, req.body)
     .then(function(res) {
@@ -120,6 +113,53 @@ RBSqlite.prototype.put = function (rb, req) {
                 type: 'update_error',
                 title: 'Internal error in Cassandra table storage backend',
                 stack: e.stack,
+                err: e,
+                req: req
+            }
+        };
+    });
+};
+
+RBSQLite.prototype.dropTable = function (rb, req) {
+    var domain = req.params.domain;
+    return this.store.dropTable(domain, req.params.table)
+    .then(function(res) {
+        return {
+            status: 204 // done
+        };
+    })
+    .catch(function(e) {
+        return {
+            status: 500,
+            body: {
+                type: 'delete_error',
+                title: 'Internal error in Cassandra table storage backend',
+                stack: e.stack,
+                err: e,
+                req: req
+            }
+        };
+    });
+};
+
+RBSQLite.prototype.getTableSchema = function (rb, req) {
+    var domain = req.params.domain;
+    return this.store.getTableSchema(domain, req.params.table)
+    .then(function(res) {
+        return {
+            status: 200,
+            headers: { etag: res.tid.toString() },
+            body: res.schema
+        };
+    })
+    .catch(function(e) {
+        return {
+            status: 500,
+            body: {
+                type: 'schema_query_error',
+                title: 'Internal error querying table schema in Cassandra storage backend',
+                stack: e.stack,
+                err: e,
                 req: req
             }
         };
@@ -131,14 +171,13 @@ RBSqlite.prototype.put = function (rb, req) {
  *
  * @return {Promise<registry>}
  */
-RBSqlite.prototype.setup = function setup () {
+RBSQLite.prototype.setup = function setup () {
     var self = this;
     // Set up storage backend
     var backend = require('./lib/index');
     return backend(self.options)
     .then(function(store) {
         self.store = store;
-        // console.log('RB setup complete', self.handler);
         return self.handler;
     });
 };
@@ -150,10 +189,10 @@ RBSqlite.prototype.setup = function setup () {
  * @return {Promise<registration>} with registration being the registration
  * object
  */
-function makeRBSqlite (options) {
-    var rb = new RBSqlite(options);
+function makeRBSQLite (options) {
+    var rb = new RBSQLite(options);
     return rb.setup();
 }
 
-module.exports = makeRBSqlite;
+module.exports = makeRBSQLite;
 
