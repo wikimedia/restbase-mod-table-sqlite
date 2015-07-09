@@ -6,12 +6,14 @@
     "bluebird": "~2.3.10",
     "extend": "~2.0.0",
     "js-yaml": "^3.2.5",
-  	"sqlite3": "*"
+  	"sqlite3": "*",
+    "cassandra-uuid": "^0.0.2",
+    "json-stable-stringify": "git+https://github.com/wikimedia/json-stable-stringify#master"
   },
   "devDependencies": {
     "mocha": "x.x.x",
     "mocha-jshint": "0.0.9",
-    "cassandra-mod-table-spec": "git+https://github.com/wikimedia/restbase-mod-table-spec#master"
+    "cassandra-mod-table-spec": "/Users/pchelko/sandbox/wiki/restbase-mod-table-spec"
   },
   "scripts": {
     "test": "rm -f test_db && mocha"

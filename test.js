@@ -8,7 +8,7 @@ dbConstructor({
     }
 })
 .then(function(client) {
-    client.operations.createTable(null, {
+    return client.operations.createTable(null, {
         uri: '/restbase.cassandra.test.local/sys/table/simple-table',
         method: 'put',
         body: {
@@ -44,6 +44,40 @@ dbConstructor({
             domain: 'restbase.cassandra.test.local',
             table: 'simple-table'
         }
+    })
+    .then(function(res) {
+        return client.operations.put(null, {
+            uri: '/restbase.cassandra.test.local/sys/table/simple-table/',
+            method: 'put',
+            body: {
+                table: 'simple-table',
+                consistency: 'localQuorum',
+                attributes: {
+                    key: 'testing'
+                }
+            },
+            params: {
+                domain: 'restbase.cassandra.test.local'
+            }
+        })
+        .then(function(res) {
+            return client.operations.get(null, {
+                uri:'/restbase.cassandra.test.local/sys/table/simple-table/',
+                method: 'get',
+                body: {
+                    table: "simple-table",
+                    attributes: {
+                        key: 'testing'
+                    }
+                },
+                params: {
+                    domain: 'restbase.cassandra.test.local'
+                }
+            })
+            .then(function(res) {
+                console.log(res);
+            })
+        });
     });
 })
 .catch(function(err) {
