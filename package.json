@@ -16,7 +16,7 @@
     "cassandra-mod-table-spec": "/Users/pchelko/sandbox/wiki/restbase-mod-table-spec"
   },
   "scripts": {
-    "test": "rm -f test_db && mocha"
+    "test": "mocha"
   }
 }
 

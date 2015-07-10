@@ -60,12 +60,16 @@ dbConstructor({
                 domain: 'restbase.cassandra.test.local'
             }
         })
+        .catch(function(e) {
+            console.log(e);
+        })
         .then(function(res) {
             return client.operations.get(null, {
                 uri:'/restbase.cassandra.test.local/sys/table/simple-table/',
                 method: 'get',
                 body: {
                     table: "simple-table",
+                    order: {tid: "desc"},
                     attributes: {
                         key: 'testing'
                     }
