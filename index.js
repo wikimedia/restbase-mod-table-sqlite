@@ -25,6 +25,7 @@ function RBSQLite (options) {
 }
 
 RBSQLite.prototype.createTable = function (rb, req) {
+    var self = this;
     var store = this.store;
     // XXX: decide on the interface
     req.body.table = req.params.table;
@@ -44,6 +45,7 @@ RBSQLite.prototype.createTable = function (rb, req) {
         };
     })
     .catch(function(e) {
+        self.log('sqlite/error', e);
         if (e.status >= 400) {
             return {
                 status: e.status,
@@ -83,6 +85,7 @@ RBSQLite.prototype.get = function (rb, req) {
         };
     })
     .catch(function(e) {
+        self.log('sqlite/error', e);
         return {
             status: 500,
             body: {
@@ -107,6 +110,7 @@ RBSQLite.prototype.put = function (rb, req) {
         };
     })
     .catch(function(e) {
+        self.log('sqlite/error', e);
         return {
             status: 500,
             body: {
@@ -129,6 +133,7 @@ RBSQLite.prototype.dropTable = function (rb, req) {
         };
     })
     .catch(function(e) {
+        self.log('sqlite/error', e);
         return {
             status: 500,
             body: {
@@ -153,6 +158,7 @@ RBSQLite.prototype.getTableSchema = function (rb, req) {
         };
     })
     .catch(function(e) {
+        self.log('sqlite/error', e);
         return {
             status: 500,
             body: {
