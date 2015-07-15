@@ -9,7 +9,7 @@
   	"sqlite3": "*",
     "cassandra-uuid": "^0.0.2",
     "json-stable-stringify": "git+https://github.com/wikimedia/json-stable-stringify#master",
-    "restbase-mod-table-spec": "git+https://github.com/wikimedia/restbase-mod-table-spec#master"
+    "restbase-mod-table-spec": "/Users/pchelko/sandbox/wiki/restbase-mod-table-spec"
   },
   "devDependencies": {
     "mocha": "x.x.x",

@@ -6,9 +6,6 @@
 var yaml = require('js-yaml');
 var fs = require("fs");
 
-// Run jshint as part of normal testing
-//require('mocha-jshint')();
-
 describe('Functional', function() {
     var conf = yaml.safeLoad(fs.readFileSync(__dirname + '/test_client.conf.yaml'));
     var dbConstructor = require('../index.js');
@@ -19,3 +16,6 @@ describe('Functional', function() {
         });
     });
 });
+
+// Run jshint as part of normal testing
+//require('mocha-jshint')();
