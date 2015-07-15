@@ -67,6 +67,7 @@ RBSQLite.prototype.createTable = function (rb, req) {
 
 // Query a table
 RBSQLite.prototype.get = function (rb, req) {
+    var self = this;
     var rp = req.params;
     if (!rp.rest && !req.body) {
         // Return the entire table
@@ -101,6 +102,7 @@ RBSQLite.prototype.get = function (rb, req) {
 
 // Update a table
 RBSQLite.prototype.put = function (rb, req) {
+    var self = this;
     var domain = req.params.domain;
     // XXX: Use the path to determine the primary key?
     return this.store.put(domain, req.body)
@@ -125,6 +127,7 @@ RBSQLite.prototype.put = function (rb, req) {
 };
 
 RBSQLite.prototype.dropTable = function (rb, req) {
+    var self = this;
     var domain = req.params.domain;
     return this.store.dropTable(domain, req.params.table)
     .then(function(res) {
@@ -148,6 +151,7 @@ RBSQLite.prototype.dropTable = function (rb, req) {
 };
 
 RBSQLite.prototype.getTableSchema = function (rb, req) {
+    var self = this;
     var domain = req.params.domain;
     return this.store.getTableSchema(domain, req.params.table)
     .then(function(res) {
