@@ -16,7 +16,7 @@
     "mocha-jshint": "0.0.9"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "rm test_db; mocha"
   }
 }
 
