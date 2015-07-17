@@ -9,14 +9,18 @@
   	"sqlite3": "*",
     "cassandra-uuid": "^0.0.2",
     "json-stable-stringify": "git+https://github.com/wikimedia/json-stable-stringify#master",
-    "restbase-mod-table-spec": "git+https://github.com/wikimedia/restbase-mod-table-spec#master"
+    "restbase-mod-table-spec": "/Users/pchelko/sandbox/wiki/restbase-mod-table-spec"
   },
   "devDependencies": {
+    "coveralls": "2.11.2",
+    "istanbul": "0.3.5",
+    "mocha-lcov-reporter": "0.0.1",
     "mocha": "x.x.x",
     "mocha-jshint": "0.0.9"
   },
   "scripts": {
-    "test": "rm test_db; mocha"
+    "test": "rm test_db; mocha",
+    "coverage": "istanbul cover _mocha -- -R spec"
   }
 }
 

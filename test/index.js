@@ -18,4 +18,4 @@ describe('Functional', function() {
 });
 
 // Run jshint as part of normal testing
-//require('mocha-jshint')();
+require('mocha-jshint')();
