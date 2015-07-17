@@ -6,7 +6,7 @@
 // global includes
 var spec = require('restbase-mod-table-spec').spec;
 
-function RBSQLite (options) {
+function RBSQLite(options) {
     this.options = options;
     this.conf = options.conf;
     this.log = options.log;
@@ -24,7 +24,7 @@ function RBSQLite (options) {
     };
 }
 
-RBSQLite.prototype.createTable = function (rb, req) {
+RBSQLite.prototype.createTable = function(rb, req) {
     var self = this;
     var store = this.store;
     // XXX: decide on the interface
@@ -66,7 +66,7 @@ RBSQLite.prototype.createTable = function (rb, req) {
 };
 
 // Query a table
-RBSQLite.prototype.get = function (rb, req) {
+RBSQLite.prototype.get = function(rb, req) {
     var self = this;
     var rp = req.params;
     if (!rp.rest && !req.body) {
@@ -101,7 +101,7 @@ RBSQLite.prototype.get = function (rb, req) {
 };
 
 // Update a table
-RBSQLite.prototype.put = function (rb, req) {
+RBSQLite.prototype.put = function(rb, req) {
     var self = this;
     var domain = req.params.domain;
     // XXX: Use the path to determine the primary key?
@@ -126,7 +126,7 @@ RBSQLite.prototype.put = function (rb, req) {
     });
 };
 
-RBSQLite.prototype.dropTable = function (rb, req) {
+RBSQLite.prototype.dropTable = function(rb, req) {
     var self = this;
     var domain = req.params.domain;
     return this.store.dropTable(domain, req.params.table)
@@ -150,14 +150,14 @@ RBSQLite.prototype.dropTable = function (rb, req) {
     });
 };
 
-RBSQLite.prototype.getTableSchema = function (rb, req) {
+RBSQLite.prototype.getTableSchema = function(rb, req) {
     var self = this;
     var domain = req.params.domain;
     return this.store.getTableSchema(domain, req.params.table)
     .then(function(res) {
         return {
             status: 200,
-            headers: { etag: res.tid.toString() },
+            headers: {etag: res.tid.toString()},
             body: res.schema
         };
     })
@@ -181,7 +181,7 @@ RBSQLite.prototype.getTableSchema = function (rb, req) {
  *
  * @return {Promise<registry>}
  */
-RBSQLite.prototype.setup = function setup () {
+RBSQLite.prototype.setup = function setup() {
     var self = this;
     // Set up storage backend
     var backend = require('./lib/index');
@@ -199,7 +199,7 @@ RBSQLite.prototype.setup = function setup () {
  * @return {Promise<registration>} with registration being the registration
  * object
  */
-function makeRBSQLite (options) {
+function makeRBSQLite(options) {
     var rb = new RBSQLite(options);
     return rb.setup();
 }
