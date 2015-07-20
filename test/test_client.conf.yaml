@@ -1,0 +1,5 @@
+type: restbase-cassandra
+dbname: test_db
+show_sql: true
+pool_idle_timeout: 10000
+retry_delay: 100
