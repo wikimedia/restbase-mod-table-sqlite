@@ -1,10 +1,11 @@
 "use strict";
 /*
- * Cassandra-backed table storage service
+ * SQLite-backed table storage service
  */
 
 // global includes
 var spec = require('restbase-mod-table-spec').spec;
+var P    = require('bluebird');
 
 function RBSQLite(options) {
     this.options = options;
@@ -27,7 +28,7 @@ function RBSQLite(options) {
 RBSQLite.prototype.createTable = function(rb, req) {
     var self = this;
     var store = this.store;
-    // XXX: decide on the interface
+
     req.body.table = req.params.table;
     var domain = req.params.domain;
 
@@ -70,8 +71,6 @@ RBSQLite.prototype.get = function(rb, req) {
     var self = this;
     var rp = req.params;
     if (!rp.rest && !req.body) {
-        // Return the entire table
-        // XXX: Only list the hash keys?
         req.body = {
             table: rp.table,
             limit: 10
@@ -104,9 +103,8 @@ RBSQLite.prototype.get = function(rb, req) {
 RBSQLite.prototype.put = function(rb, req) {
     var self = this;
     var domain = req.params.domain;
-    // XXX: Use the path to determine the primary key?
     return this.store.put(domain, req.body)
-    .then(function(res) {
+    .then(function() {
         return {
             status: 201 // created
         };
@@ -130,7 +128,7 @@ RBSQLite.prototype.dropTable = function(rb, req) {
     var self = this;
     var domain = req.params.domain;
     return this.store.dropTable(domain, req.params.table)
-    .then(function(res) {
+    .then(function() {
         return {
             status: 204 // done
         };
@@ -184,8 +182,8 @@ RBSQLite.prototype.getTableSchema = function(rb, req) {
 RBSQLite.prototype.setup = function setup() {
     var self = this;
     // Set up storage backend
-    var backend = require('./lib/index');
-    return backend(self.options)
+    var DB = require('./lib/db');
+    return P.resolve(new DB(self.options))
     .then(function(store) {
         self.store = store;
         return self.handler;

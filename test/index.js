@@ -12,7 +12,7 @@ describe('Functional', function() {
     require('restbase-mod-table-spec').test(function() {
         return dbConstructor({
             conf: conf,
-            log: console.log
+            log: function() {}
         });
     });
 });
