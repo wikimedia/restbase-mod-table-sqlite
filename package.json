@@ -9,7 +9,8 @@
   	"sqlite3": "*",
     "cassandra-uuid": "^0.0.2",
     "json-stable-stringify": "git+https://github.com/wikimedia/json-stable-stringify#master",
-    "restbase-mod-table-spec": "/Users/pchelko/sandbox/wiki/restbase-mod-table-spec"
+    "restbase-mod-table-spec": "/Users/pchelko/sandbox/wiki/restbase-mod-table-spec",
+    "generic-pool": "2.2.0"
   },
   "devDependencies": {
     "coveralls": "2.11.2",
