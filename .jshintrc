@@ -27,6 +27,5 @@
 
 	"nomen": false,
 	"loopfunc": true,
-        "esnext": true
-	//"onevar": true
+  	"esnext": true
 }
