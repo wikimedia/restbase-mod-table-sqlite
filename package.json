@@ -1,7 +1,7 @@
 {
   "name": "restbase-mod-table-sqlite",
   "description": "RESTBase table storage using sqlite for testing purposes",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "dependencies": {
     "bluebird": "~2.3.10",
     "extend": "~2.0.0",
