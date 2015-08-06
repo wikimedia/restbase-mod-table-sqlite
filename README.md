@@ -28,13 +28,10 @@ options accepted by this module.
 Option | Default | Description
 ------ | ------- | -----------
 `dbname` | `restbase` | The path to the database file
-`pool_idle_timeout` | `10000` | The amount of milliseconds a connection to the
-database is kept open during idle periods
-`retry_delay` | `100` | The amount of time (in ms) to wait before retrying
-queries when the database is locked
+`pool_idle_timeout` | `10000` | The amount of milliseconds a connection to the database is kept open during idle periods
+`retry_delay` | `100` | The amount of time (in ms) to wait before retrying queries when the database is locked
 `retry_limit` | `5` | The maximum number of times a query is retried
-`show_sql` | `false` | Whether to log queries being executed; for debugging
-purposes only
+`show_sql` | `false` | Whether to log queries being executed; for debugging purposes only
 
 All of the configuration directives are optional. Here's an example of the
 `table` module using the SQLite back-end module:
