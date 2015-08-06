@@ -2,26 +2,45 @@
   "name": "restbase-mod-table-sqlite",
   "description": "RESTBase table storage using sqlite for testing purposes",
   "version": "0.1.1",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wikimedia/restbase-mod-table-sqlite.git"
+  },
+  "keywords": [
+    "REST",
+    "API",
+    "storage",
+    "buckets",
+    "tables",
+    "sqlite"
+  ],
+  "author": "Wikimedia Service Team <services@wikimedia.org>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://phabricator.wikimedia.org/tag/restbase/"
+  },
+  "homepage": "https://github.com/wikimedia/restbase-mod-table-sqlite",
   "dependencies": {
-    "bluebird": "~2.3.10",
-    "extend": "~2.0.0",
-    "js-yaml": "^3.2.5",
-  	"sqlite3": "*",
+    "bluebird": "~2.8.2",
+    "extend": "^3.0.0",
+    "js-yaml": "^3.3.1",
+    "sqlite3": "3.x.x",
     "cassandra-uuid": "^0.0.2",
     "json-stable-stringify": "git+https://github.com/wikimedia/json-stable-stringify#master",
-    "restbase-mod-table-spec": "git+https://github.com/wikimedia/restbase-mod-table-spec#master",
-    "generic-pool": "2.2.0"
+    "restbase-mod-table-spec": "^0.0.1",
+    "generic-pool": "^2.2.0"
   },
   "devDependencies": {
-    "coveralls": "2.11.2",
-    "istanbul": "0.3.5",
-    "mocha-lcov-reporter": "0.0.1",
-    "mocha": "x.x.x",
-    "mocha-jshint": "0.0.9"
+    "coveralls": "^2.11.3",
+    "istanbul": "^0.3.17",
+    "mocha-lcov-reporter": "^0.0.2",
+    "mocha": "^2.2.5",
+    "mocha-jshint": "^2.2.3"
   },
   "scripts": {
-    "test": "rm test_db; mocha",
-    "coverage": "istanbul cover _mocha -- -R spec"
+    "test": "rm test_db > /dev/null; mocha",
+    "coverage": "rm test_db > /dev/null; istanbul cover _mocha -- -R spec"
   }
 }
 
