@@ -14,7 +14,7 @@ npm install restbase-mod-table-sqlite
 ```
 
 Note: in order to successfully install the module, you are going to need the
-SQLite3 development.
+SQLite3 development headers.
 
 ## Configuration
 
