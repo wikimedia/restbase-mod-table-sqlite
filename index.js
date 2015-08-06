@@ -57,7 +57,7 @@ RBSQLite.prototype.createTable = function(rb, req) {
             status: 500,
             body: {
                 type: 'table_creation_error',
-                title: 'Internal error while creating a table within the cassandra storage backend',
+                title: 'Internal error while creating a table within the SQLite storage backend',
                 stack: e.stack,
                 err: e,
                 req: req
@@ -90,7 +90,7 @@ RBSQLite.prototype.get = function(rb, req) {
             status: 500,
             body: {
                 type: 'query_error',
-                title: 'Error in Cassandra table storage backend',
+                title: 'Error in SQLite table storage backend',
                 stack: e.stack,
                 err: e,
                 req: req
@@ -115,7 +115,7 @@ RBSQLite.prototype.put = function(rb, req) {
             status: 500,
             body: {
                 type: 'update_error',
-                title: 'Internal error in Cassandra table storage backend',
+                title: 'Internal error in SQLite table storage backend',
                 stack: e.stack,
                 err: e,
                 req: req
@@ -139,7 +139,7 @@ RBSQLite.prototype.dropTable = function(rb, req) {
             status: 500,
             body: {
                 type: 'delete_error',
-                title: 'Internal error in Cassandra table storage backend',
+                title: 'Internal error in SQLite table storage backend',
                 stack: e.stack,
                 err: e,
                 req: req
@@ -165,7 +165,7 @@ RBSQLite.prototype.getTableSchema = function(rb, req) {
             status: 500,
             body: {
                 type: 'schema_query_error',
-                title: 'Internal error querying table schema in Cassandra storage backend',
+                title: 'Internal error querying table schema in SQLite storage backend',
                 stack: e.stack,
                 err: e,
                 req: req

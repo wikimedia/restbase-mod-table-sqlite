@@ -1,4 +1,4 @@
-type: restbase-cassandra
+type: restbase-sqlite
 dbname: test_db
 show_sql: true
 pool_idle_timeout: 10000
