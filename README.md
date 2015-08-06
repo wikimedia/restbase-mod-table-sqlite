@@ -1,7 +1,8 @@
 # restbase-mod-table-sqlite [![Build Status](https://travis-ci.org/wikimedia/restbase-mod-table-sqlite.svg?branch=master)](https://travis-ci.org/wikimedia/restbase-mod-table-sqlite)
 
-An SQLite3 back-end module for [RESTBase](wikimedia/restbase) conforming to the
-[RESTBase storage specification](wikimedia/restbase-mod-table-spec).
+An SQLite3 back-end module for [RESTBase](https://github.com/wikimedia/restbase)
+conforming to the [RESTBase storage
+specification](https://github.com/wikimedia/restbase-mod-table-spec).
 
 ## Installation
 
@@ -20,10 +21,10 @@ SQLite3 development headers.
 
 RESTBase comes pre-configured to use Cassandra as its back-end storage. In order
 to select SQLite, RESTBase's [`table` module in the configuration
-file](wikimedia/restbase/config.example.yaml#L53) needs to be instructed to use
-this module; simply replace `restbase-mod-table-cassandra` with
-`restbase-mod-table-sqlite`. The table that follows lists the configuration
-options accepted by this module.
+file](https://github.com/wikimedia/restbase/blob/58d0d733fcf1bd625a20cfcdf67b9cdce5e0ca13/config.example.yaml#L53)
+needs to be instructed to use this module; simply replace
+`restbase-mod-table-cassandra` with `restbase-mod-table-sqlite`. The table that
+follows lists the configuration options accepted by this module.
 
 Option | Default | Description
 ------ | ------- | -----------
