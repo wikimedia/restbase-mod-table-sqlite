@@ -28,7 +28,7 @@
     "sqlite3": "3.x.x",
     "cassandra-uuid": "^0.0.2",
     "json-stable-stringify": "git+https://github.com/wikimedia/json-stable-stringify#master",
-    "restbase-mod-table-spec": "^0.0.1",
+    "restbase-mod-table-spec": "^0.0.2",
     "generic-pool": "^2.2.0"
   },
   "devDependencies": {
