@@ -29,7 +29,8 @@
     "cassandra-uuid": "^0.0.2",
     "json-stable-stringify": "git+https://github.com/wikimedia/json-stable-stringify#master",
     "restbase-mod-table-spec": "^0.0.3",
-    "generic-pool": "^2.2.0"
+    "generic-pool": "^2.2.0",
+    "lru-cache": "^2.6.5"
   },
   "devDependencies": {
     "coveralls": "^2.11.3",
