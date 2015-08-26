@@ -5,7 +5,6 @@
 
 // global includes
 var spec = require('restbase-mod-table-spec').spec;
-var P    = require('bluebird');
 
 function RBSQLite(options) {
     this.options = options;
@@ -182,8 +181,8 @@ RBSQLite.prototype.getTableSchema = function(rb, req) {
 RBSQLite.prototype.setup = function setup() {
     var self = this;
     // Set up storage backend
-    var DB = require('./lib/db');
-    return P.resolve(new DB(self.options))
+    var createDB = require('./lib/db');
+    return createDB(self.options)
     .then(function(store) {
         self.store = store;
         return self.handler;
