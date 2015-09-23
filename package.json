@@ -1,7 +1,7 @@
 {
   "name": "restbase-mod-table-sqlite",
   "description": "RESTBase table storage using sqlite for testing purposes",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -22,21 +22,21 @@
   },
   "homepage": "https://github.com/wikimedia/restbase-mod-table-sqlite",
   "dependencies": {
-    "bluebird": "~2.8.2",
+    "bluebird": "^2.10.0",
     "extend": "^3.0.0",
-    "js-yaml": "^3.3.1",
-    "sqlite3": "3.x.x",
+    "js-yaml": "^3.4.2",
+    "sqlite3": "^3.1.0",
     "cassandra-uuid": "^0.0.2",
     "json-stable-stringify": "git+https://github.com/wikimedia/json-stable-stringify#master",
-    "restbase-mod-table-spec": "^0.0.5",
+    "restbase-mod-table-spec": "^0.0.8",
     "generic-pool": "^2.2.0",
-    "lru-cache": "^2.6.5"
+    "lru-cache": "^2.7.0"
   },
   "devDependencies": {
-    "coveralls": "^2.11.3",
-    "istanbul": "^0.3.17",
-    "mocha-lcov-reporter": "^0.0.2",
-    "mocha": "^2.2.5",
+    "coveralls": "^2.11.4",
+    "istanbul": "^0.3.20",
+    "mocha-lcov-reporter": "^1.0.0",
+    "mocha": "^2.3.3",
     "mocha-jshint": "^2.2.3"
   },
   "scripts": {
