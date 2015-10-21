@@ -1,7 +1,7 @@
 {
   "name": "restbase-mod-table-sqlite",
   "description": "RESTBase table storage using sqlite for testing purposes",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "main": "index.js",
   "repository": {
     "type": "git",
