@@ -154,7 +154,7 @@ RBSQLite.prototype.getTableSchema = function(rb, req) {
     .then(function(res) {
         return {
             status: 200,
-            headers: {etag: res.tid.toString()},
+            headers: { etag: res.tid.toString() },
             body: res.schema
         };
     })
