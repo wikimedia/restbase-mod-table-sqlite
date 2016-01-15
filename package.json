@@ -1,7 +1,7 @@
 {
   "name": "restbase-mod-table-sqlite",
   "description": "RESTBase table storage using sqlite for testing purposes",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/wikimedia/restbase-mod-table-sqlite",
   "dependencies": {
-    "bluebird": "~2.8.2",
+    "bluebird": "^3.0.6",
     "extend": "^3.0.0",
     "js-yaml": "^3.4.6",
     "sqlite3": "^3.1.1",
