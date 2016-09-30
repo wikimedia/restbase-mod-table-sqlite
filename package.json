@@ -38,7 +38,9 @@
     "mocha-lcov-reporter": "^1.2.0",
     "mocha": "^3.1.0",
     "mocha-jshint": "^2.3.1",
-    "mocha-jscs": "^5.0.1"
+    "mocha-jscs": "^5.0.1",
+    "mocha-eslint":"^3.0.1",
+    "eslint-config-node-services": "^1.0.0"
   },
   "scripts": {
     "test": "rm test_db > /dev/null; mocha",
