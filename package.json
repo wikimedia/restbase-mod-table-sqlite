@@ -1,5 +1,5 @@
 {
-  "name": "restbase-mod-table-sqlite",
+  "name": "restbase-mod-table-sqlite-ng",
   "description": "RESTBase table storage using sqlite for testing purposes",
   "version": "0.1.20",
   "main": "index.js",
@@ -28,7 +28,7 @@
     "sqlite3": "^3.1.4",
     "cassandra-uuid": "^0.0.2",
     "json-stable-stringify": "git+https://github.com/wikimedia/json-stable-stringify#master",
-    "restbase-mod-table-spec": "^0.1.10",
+    "restbase-mod-table-spec-ng": "git+https://github.com/wikimedia/restbase-mod-table-spec#redesign",
     "generic-pool": "^2.4.2",
     "lru-cache": "^4.0.1"
   },
