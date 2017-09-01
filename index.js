@@ -166,7 +166,27 @@ class RBSQLite {
     }
 
     delete(rb, req) {
-        // TODO
+        const domain = req.params.domain;
+        // XXX: Use the path to determine the primary key?
+        return this.store.delete(domain, req.body)
+        .thenReturn({
+            // deleted
+            status: 204
+        })
+        .catch((e) => ({
+            status: 500,
+            body: {
+                type: 'delete_error',
+                title: 'Internal error in SQLite table storage backend',
+                stack: e.stack,
+                err: e,
+                req: {
+                    uri: req.uri,
+                    headers: req.headers,
+                    body: req.body && JSON.stringify(req.body).slice(0, 200)
+                }
+            }
+        }));
     }
 
     /*
