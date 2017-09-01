@@ -5,7 +5,7 @@
  */
 
 // global includes
-const spec = require('restbase-mod-table-spec').spec;
+const spec = require('restbase-mod-table-spec-ng').spec;
 
 class RBSQLite {
     constructor(options) {
@@ -21,7 +21,8 @@ class RBSQLite {
                 dropTable: this.dropTable.bind(this),
                 getTableSchema: this.getTableSchema.bind(this),
                 get: this.get.bind(this),
-                put: this.put.bind(this)
+                put: this.put.bind(this),
+                delete: this.delete.bind(this)
             }
         };
     }
@@ -147,7 +148,6 @@ class RBSQLite {
         return this.store.getTableSchema(domain, req.params.table)
         .then((res) => ({
             status: 200,
-            headers: { etag: res.tid.toString() },
             body: res.schema
         }))
         .catch((e) => {
@@ -163,6 +163,10 @@ class RBSQLite {
                 }
             };
         });
+    }
+
+    delete(rb, req) {
+        // TODO
     }
 
     /*
