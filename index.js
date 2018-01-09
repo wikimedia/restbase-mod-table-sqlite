@@ -5,7 +5,7 @@
  */
 
 // global includes
-const spec = require('restbase-mod-table-spec-ng').spec;
+const spec = require('restbase-mod-table-spec').spec;
 
 class RBSQLite {
     constructor(options) {
