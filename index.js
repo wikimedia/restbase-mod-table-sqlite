@@ -21,7 +21,8 @@ class RBSQLite {
                 dropTable: this.dropTable.bind(this),
                 getTableSchema: this.getTableSchema.bind(this),
                 get: this.get.bind(this),
-                put: this.put.bind(this)
+                put: this.put.bind(this),
+                delete: this.delete.bind(this)
             }
         };
     }
@@ -147,7 +148,6 @@ class RBSQLite {
         return this.store.getTableSchema(domain, req.params.table)
         .then((res) => ({
             status: 200,
-            headers: { etag: res.tid.toString() },
             body: res.schema
         }))
         .catch((e) => {
@@ -163,6 +163,30 @@ class RBSQLite {
                 }
             };
         });
+    }
+
+    delete(rb, req) {
+        const domain = req.params.domain;
+        // XXX: Use the path to determine the primary key?
+        return this.store.delete(domain, req.body)
+        .thenReturn({
+            // deleted
+            status: 204
+        })
+        .catch((e) => ({
+            status: 500,
+            body: {
+                type: 'delete_error',
+                title: 'Internal error in SQLite table storage backend',
+                stack: e.stack,
+                err: e,
+                req: {
+                    uri: req.uri,
+                    headers: req.headers,
+                    body: req.body && JSON.stringify(req.body).slice(0, 200)
+                }
+            }
+        }));
     }
 
     /*
