@@ -79,7 +79,7 @@ class RBSQLite {
         }
         const domain = req.params.domain;
         return this.store.get(domain, req.body)
-        .then((res) => ({
+        .then(res => ({
             status: res.items.length ? 200 : 404,
             body: res
         }))
@@ -146,7 +146,7 @@ class RBSQLite {
     getTableSchema(rb, req) {
         const domain = req.params.domain;
         return this.store.getTableSchema(domain, req.params.table)
-        .then((res) => ({
+        .then(res => ({
             status: 200,
             body: res.schema
         }))
@@ -173,7 +173,7 @@ class RBSQLite {
             // deleted
             status: 204
         })
-        .catch((e) => ({
+        .catch(e => ({
             status: 500,
             body: {
                 type: 'delete_error',
@@ -208,7 +208,7 @@ class RBSQLite {
 
 /**
  * Factory
- * @param options
+ * @param {Object} options
  * @return {Promise<registration>} with registration being the registration
  * object
  */
