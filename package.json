@@ -1,7 +1,7 @@
 {
   "name": "restbase-mod-table-sqlite",
   "description": "RESTBase table storage using sqlite for testing purposes",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -22,28 +22,26 @@
   },
   "homepage": "https://github.com/wikimedia/restbase-mod-table-sqlite",
   "dependencies": {
-    "bluebird": "^3.5.1",
-    "extend": "^3.0.1",
-    "js-yaml": "^3.11.0",
-    "sqlite3": "^4.0.0",
-    "cassandra-uuid": "^0.0.2",
+    "bluebird": "^3.5.2",
+    "extend": "^3.0.2",
+    "js-yaml": "^3.12.0",
+    "sqlite3": "^4.0.3",
+    "cassandra-uuid": "^0.1.0",
     "json-stable-stringify": "^1.0.1",
-    "restbase-mod-table-spec": "^1.0.0",
+    "restbase-mod-table-spec": "^1.1.0",
     "generic-pool": "^3.4.2",
-    "lru-cache": "^4.1.2"
+    "lru-cache": "^4.1.3"
   },
   "devDependencies": {
-    "coveralls": "^3.0.0",
+    "coveralls": "^3.0.2",
     "istanbul": "^0.4.5",
     "mocha-lcov-reporter": "^1.3.0",
-    "mocha": "^5.0.4",
-    "mocha-jshint": "^2.3.1",
-    "mocha-jscs": "^5.0.1",
+    "mocha": "^5.2.0",
     "mocha-eslint": "^4.1.0",
     "eslint-config-node-services": "^2.2.5",
     "eslint-config-wikimedia": "^0.5.0",
-    "eslint-plugin-jsdoc": "^3.5.0",
-    "eslint-plugin-json": "^1.2.0"
+    "eslint-plugin-jsdoc": "^3.9.1",
+    "eslint-plugin-json": "^1.2.1"
   },
   "scripts": {
     "test": "rm test_db > /dev/null; mocha",
