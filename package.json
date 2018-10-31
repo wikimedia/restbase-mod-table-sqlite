@@ -1,7 +1,7 @@
 {
   "name": "restbase-mod-table-sqlite",
   "description": "RESTBase table storage using sqlite for testing purposes",
-  "version": "1.1.2",
+  "version": "1.1.1",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
     "sqlite3": "^4.0.3",
     "cassandra-uuid": "^0.1.0",
     "json-stable-stringify": "^1.0.1",
-    "restbase-mod-table-spec": "^1.1.0",
+    "restbase-mod-table-spec": "^1.1.2",
     "generic-pool": "^3.4.2",
     "lru-cache": "^4.1.3"
   },
