@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
  * SQLite-backed table storage service
@@ -79,7 +79,7 @@ class RBSQLite {
         }
         const domain = req.params.domain;
         return this.store.get(domain, req.body)
-        .then(res => ({
+        .then((res) => ({
             status: res.items.length ? 200 : 404,
             body: res
         }))
@@ -146,7 +146,7 @@ class RBSQLite {
     getTableSchema(rb, req) {
         const domain = req.params.domain;
         return this.store.getTableSchema(domain, req.params.table)
-        .then(res => ({
+        .then((res) => ({
             status: 200,
             body: res.schema
         }))
@@ -173,7 +173,7 @@ class RBSQLite {
             // deleted
             status: 204
         })
-        .catch(e => ({
+        .catch((e) => ({
             status: 500,
             body: {
                 type: 'delete_error',
@@ -205,7 +205,6 @@ class RBSQLite {
     }
 }
 
-
 /**
  * Factory
  * @param {Object} options
@@ -218,4 +217,3 @@ function makeRBSQLite(options) {
 }
 
 module.exports = makeRBSQLite;
-
