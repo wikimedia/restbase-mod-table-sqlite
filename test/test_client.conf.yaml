@@ -4,6 +4,8 @@ show_sql: true
 pool_idle_timeout: 10000
 retry_delay: 100
 storage_groups:
+  - name: unused.domain
+    domains: unused.domain
   - name: test.domains
     domains:
       - "/test\\..*\\.org/"
