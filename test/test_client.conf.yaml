@@ -1,7 +1,9 @@
-type: restbase-sqlite
-dbname: test_db
+type: restbase-mysql
+host: localhost
+database: test_db
+username: mysql
+password: mysql
 show_sql: true
-pool_idle_timeout: 10000
 retry_delay: 100
 storage_groups:
   - name: unused.domain

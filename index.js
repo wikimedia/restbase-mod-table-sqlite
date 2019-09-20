@@ -1,13 +1,13 @@
 'use strict';
 
 /*
- * SQLite-backed table storage service
+ * MySQL-backed table storage service
  */
 
 // global includes
 const spec = require('restbase-mod-table-spec').spec;
 
-class RBSQLite {
+class RBMySQL {
     constructor(options) {
         this.options = options;
         this.conf = options.conf;
@@ -47,7 +47,7 @@ class RBSQLite {
             }
         }))
         .catch((e) => {
-            this.log('sqlite/error', e);
+            this.log('mysql/error', e);
             if (e.status >= 400) {
                 return {
                     status: e.status,
@@ -59,7 +59,7 @@ class RBSQLite {
                 body: {
                     type: 'table_creation_error',
                     title: 'Internal error while creating a ' +
-                        'table within the SQLite storage backend',
+                        'table within the MySQL storage backend',
                     stack: e.stack,
                     err: e,
                     req
@@ -84,12 +84,12 @@ class RBSQLite {
             body: res
         }))
         .catch((e) => {
-            this.log('sqlite/error', e);
+            this.log('mysql/error', e);
             return {
                 status: 500,
                 body: {
                     type: 'query_error',
-                    title: 'Error in SQLite table storage backend',
+                    title: 'Error in MySQL table storage backend',
                     stack: e.stack,
                     err: e,
                     req
@@ -107,12 +107,12 @@ class RBSQLite {
             status: 201
         }))
         .catch((e) => {
-            this.log('sqlite/error', e);
+            this.log('mysql/error', e);
             return {
                 status: 500,
                 body: {
                     type: 'update_error',
-                    title: 'Internal error in SQLite table storage backend',
+                    title: 'Internal error in MySQL table storage backend',
                     stack: e.stack,
                     err: e,
                     req
@@ -129,12 +129,12 @@ class RBSQLite {
             status: 204
         }))
         .catch((e) => {
-            this.log('sqlite/error', e);
+            this.log('mysql/error', e);
             return {
                 status: 500,
                 body: {
                     type: 'delete_error',
-                    title: 'Internal error in SQLite table storage backend',
+                    title: 'Internal error in MySQL table storage backend',
                     stack: e.stack,
                     err: e,
                     req
@@ -151,12 +151,12 @@ class RBSQLite {
             body: res.schema
         }))
         .catch((e) => {
-            this.log('sqlite/error', e);
+            this.log('mysql/error', e);
             return {
                 status: 500,
                 body: {
                     type: 'schema_query_error',
-                    title: 'Internal error querying table schema in SQLite storage backend',
+                    title: 'Internal error querying table schema in MySQL storage backend',
                     stack: e.stack,
                     err: e,
                     req
@@ -177,7 +177,7 @@ class RBSQLite {
             status: 500,
             body: {
                 type: 'delete_error',
-                title: 'Internal error in SQLite table storage backend',
+                title: 'Internal error in MySQL table storage backend',
                 stack: e.stack,
                 err: e,
                 req: {
@@ -211,9 +211,9 @@ class RBSQLite {
  * @return {Promise<registration>} with registration being the registration
  * object
  */
-function makeRBSQLite(options) {
-    const rb = new RBSQLite(options);
+function makeRBMySQL(options) {
+    const rb = new RBMySQL(options);
     return rb.setup();
 }
 
-module.exports = makeRBSQLite;
+module.exports = makeRBMySQL;
